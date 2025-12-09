@@ -1,0 +1,181 @@
+{
+  "request_id": "0955fae6-02eb-4936-8e87-2528d36a4a74",
+  "timestamp": "2025-12-08T23:59:00.251414+00:00",
+  "duration_ms": 0,
+  "cached": false,
+  "request_data": {
+    "method": "POST",
+    "body": {
+      "section": "all",
+      "time_of_day": "Live",
+      "books": [
+        "BOOK1",
+        "BOOK2"
+      ],
+      "pos_date": "20241208",
+      "env_date": "20241208",
+      "section_params": {
+        "futures": {
+          "eod_price_override": 5000.0
+        },
+        "new_trades": {
+          "include_tplus1": true
+        }
+      }
+    }
+  },
+  "response_data": {
+    "futures": {
+      "positions": [
+        {
+          "instrument": "ES_H25",
+          "quantity": 100,
+          "price": 5000.0,
+          "pnl": 12500.0
+        },
+        {
+          "instrument": "NQ_H25",
+          "quantity": -50,
+          "price": 5000.0,
+          "pnl": -8750.0
+        }
+      ],
+      "metadata": {
+        "time_of_day": "Live",
+        "books": [
+          "BOOK1",
+          "BOOK2"
+        ],
+        "pos_date": "20241208",
+        "env_date": "20241208",
+        "overrides_applied": {
+          "eod_price": true,
+          "open_price": false,
+          "current_price": false
+        }
+      }
+    },
+    "bonds": {
+      "positions": [
+        {
+          "instrument": "US10Y",
+          "notional": 10000000,
+          "yield": 4.25,
+          "spread": 0.015,
+          "dv01": 8500.0
+        },
+        {
+          "instrument": "US30Y",
+          "notional": 5000000,
+          "yield": 4.55,
+          "spread": 0.022,
+          "dv01": 15200.0
+        }
+      ],
+      "metadata": {
+        "time_of_day": "Live",
+        "books": [
+          "BOOK1",
+          "BOOK2"
+        ],
+        "pos_date": "20241208",
+        "env_date": "20241208",
+        "overrides_applied": {
+          "spread": false,
+          "yield": false
+        }
+      }
+    },
+    "ir_delta": {
+      "deltas": [
+        {
+          "tenor": "1M",
+          "delta": 1250.0
+        },
+        {
+          "tenor": "3M",
+          "delta": 3420.0
+        },
+        {
+          "tenor": "6M",
+          "delta": 5890.0
+        },
+        {
+          "tenor": "1Y",
+          "delta": 12500.0
+        },
+        {
+          "tenor": "2Y",
+          "delta": 28400.0
+        },
+        {
+          "tenor": "5Y",
+          "delta": 45200.0
+        },
+        {
+          "tenor": "10Y",
+          "delta": 62100.0
+        },
+        {
+          "tenor": "30Y",
+          "delta": 38900.0
+        }
+      ],
+      "total_delta": 197660.0,
+      "metadata": {
+        "time_of_day": "Live",
+        "books": [
+          "BOOK1",
+          "BOOK2"
+        ],
+        "pos_date": "20241208",
+        "env_date": "20241208",
+        "curve": "USD_SOFR",
+        "shift_bps": 1.0
+      }
+    },
+    "new_trades": {
+      "trades": [
+        {
+          "trade_id": "TRD001",
+          "instrument": "ES_H25",
+          "side": "BUY",
+          "quantity": 25,
+          "price": 5020.0,
+          "trade_date": "20241208",
+          "settlement_date": "20241208"
+        },
+        {
+          "trade_id": "TRD002",
+          "instrument": "US10Y",
+          "side": "SELL",
+          "notional": 5000000,
+          "yield": 4.28,
+          "trade_date": "20241208",
+          "settlement_date": "20241208"
+        },
+        {
+          "trade_id": "TRD003",
+          "instrument": "NQ_H25",
+          "side": "BUY",
+          "quantity": 10,
+          "price": 17800.0,
+          "trade_date": "20241208",
+          "settlement_date": "T+1"
+        }
+      ],
+      "count": 3,
+      "metadata": {
+        "time_of_day": "Live",
+        "books": [
+          "BOOK1",
+          "BOOK2"
+        ],
+        "pos_date": "20241208",
+        "env_date": "20241208",
+        "include_tplus1": true
+      }
+    }
+  },
+  "error_stack": ""
+}

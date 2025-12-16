@@ -67,11 +67,13 @@ class PositionEnvironmentHandler(RequestHandler):
         cache_hit: bool,
         sections: dict,
     ):
+        response_timestamp = now_iso()
         duration_ms = int((time.time() - start) * 1000)
 
         response = {
             "request_id": request_id,
             "request_timestamp": request_timestamp,
+            "response_timestamp": response_timestamp,
             "duration_ms": duration_ms,
             "curl_command": generate_curl_command(self.request, params, section_params),
             "request_params": params.to_dict(),
@@ -80,7 +82,7 @@ class PositionEnvironmentHandler(RequestHandler):
             "server_status": get_server_status(),
             "error": False,
             "error_stack": "",
-            "sections": sections,
+            "response_data": sections,
         }
 
         self.set_header("Content-Type", "application/json")
@@ -94,11 +96,13 @@ class PositionEnvironmentHandler(RequestHandler):
         start: float,
         error_stack: str,
     ):
+        response_timestamp = now_iso()
         duration_ms = int((time.time() - start) * 1000)
 
         response = {
             "request_id": request_id,
             "request_timestamp": request_timestamp,
+            "response_timestamp": response_timestamp,
             "duration_ms": duration_ms,
             "curl_command": None,
             "request_params": None,
@@ -107,7 +111,7 @@ class PositionEnvironmentHandler(RequestHandler):
             "server_status": get_server_status(),
             "error": True,
             "error_stack": error_stack,
-            "sections": None,
+            "response_data": None,
         }
 
         self.set_status(400)

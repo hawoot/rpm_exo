@@ -3,32 +3,35 @@ Thread-safe cache storage.
 """
 
 import threading
-from typing import Dict, Any, Optional
+from datetime import datetime, timezone
+from typing import Dict, Any, Optional, Tuple
 
 
-_cache: Dict[tuple, Dict[str, Any]] = {}
+_cache: Dict[tuple, Tuple[Dict[str, Any], str]] = {}  # key -> (sections, cached_at)
 _cache_lock = threading.Lock()
 
 
 def get_from_cache(key: tuple) -> Optional[Dict[str, Any]]:
     """Get cached sections or None."""
     with _cache_lock:
-        return _cache.get(key)
+        entry = _cache.get(key)
+        return entry[0] if entry else None
 
 
 def write_to_cache(key: tuple, sections: Dict[str, Any]) -> None:
-    """Write sections to cache."""
+    """Write sections to cache with timestamp."""
     with _cache_lock:
-        _cache[key] = sections
+        cached_at = datetime.now(timezone.utc).isoformat()
+        _cache[key] = (sections, cached_at)
 
 
 def get_cache_info() -> Dict[str, Any]:
-    """Cache stats for /status endpoint."""
+    """Cache stats for /status endpoint. Shows key + cached_at only."""
     with _cache_lock:
         return {
             "size": len(_cache),
-            "keys": [
-                {"key": str(k), "sections": list(v.keys())}
+            "entries": [
+                {"key": str(k), "cached_at": v[1]}
                 for k, v in _cache.items()
             ],
         }

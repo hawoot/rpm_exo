@@ -1,0 +1,145 @@
+================================================================================
+POSITION ENVIRONMENT SERVER - TEST REQUESTS
+================================================================================
+
+SETUP
+-----
+1. Install tornado: pip install tornado
+2. Run server: python -m position_server.server
+3. Server runs on http://localhost:8888
+
+================================================================================
+STATUS ENDPOINT
+================================================================================
+
+# Check server status, warmup threads, and cache info
+curl -s http://localhost:8888/status | python -m json.tool
+
+================================================================================
+GET REQUESTS (reads from cache, computes on miss)
+================================================================================
+
+# Basic GET - all required params
+curl -s 'http://localhost:8888/position-environment?env_date=20251216&pos_date=20251215&books=CUPS,YCSO&time_of_day=SOD' | python -m json.tool
+
+# Single book
+curl -s 'http://localhost:8888/position-environment?env_date=20251216&pos_date=20251215&books=EXO&time_of_day=LIVE' | python -m json.tool
+
+# Run twice to see cache_hit=true on second request
+curl -s 'http://localhost:8888/position-environment?env_date=20251216&pos_date=20251215&books=CUPS&time_of_day=EOD' | python -m json.tool
+
+================================================================================
+POST REQUESTS (always fresh, bypasses cache)
+================================================================================
+
+# Basic POST - same params as GET
+curl -s -X POST http://localhost:8888/position-environment \
+  -H 'Content-Type: application/json' \
+  -d '{"env_date":"20251216","pos_date":"20251215","books":["CUPS","YCSO"],"time_of_day":"SOD"}' \
+  | python -m json.tool
+
+# POST with section_params for futures
+curl -s -X POST http://localhost:8888/position-environment \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "env_date":"20251216",
+    "pos_date":"20251215",
+    "books":["CUPS"],
+    "time_of_day":"LIVE",
+    "section_params":{
+      "futures":{"live_price_overrides":{"ES":5000.0,"NQ":18000.0}}
+    }
+  }' | python -m json.tool
+
+# POST with section_params for bonds
+curl -s -X POST http://localhost:8888/position-environment \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "env_date":"20251216",
+    "pos_date":"20251215",
+    "books":["YCSO"],
+    "time_of_day":"EOD",
+    "section_params":{
+      "bonds":{"exclude_isins":["US912828ZT85","US91282CJL54"]}
+    }
+  }' | python -m json.tool
+
+================================================================================
+ERROR CASES (expect error=true with error_stack)
+================================================================================
+
+# Missing required param
+curl -s 'http://localhost:8888/position-environment?env_date=20251216&pos_date=20251215&time_of_day=SOD' | python -m json.tool
+
+# Invalid date format
+curl -s 'http://localhost:8888/position-environment?env_date=2025-12-16&pos_date=20251215&books=CUPS&time_of_day=SOD' | python -m json.tool
+
+# Invalid time_of_day
+curl -s 'http://localhost:8888/position-environment?env_date=20251216&pos_date=20251215&books=CUPS&time_of_day=INTRADAY' | python -m json.tool
+
+# Empty books
+curl -s -X POST http://localhost:8888/position-environment \
+  -H 'Content-Type: application/json' \
+  -d '{"env_date":"20251216","pos_date":"20251215","books":[],"time_of_day":"SOD"}' \
+  | python -m json.tool
+
+# Invalid JSON
+curl -s -X POST http://localhost:8888/position-environment \
+  -H 'Content-Type: application/json' \
+  -d 'not json' \
+  | python -m json.tool
+
+# Invalid section_params type (should cause section error, not top-level)
+curl -s -X POST http://localhost:8888/position-environment \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "env_date":"20251216",
+    "pos_date":"20251215",
+    "books":["CUPS"],
+    "time_of_day":"SOD",
+    "section_params":{
+      "futures":{"live_price_overrides":"not a dict"}
+    }
+  }' | python -m json.tool
+
+================================================================================
+RESPONSE STRUCTURE
+================================================================================
+
+Success response:
+{
+  "request_id": "uuid",
+  "request_timestamp": "ISO timestamp",
+  "duration_ms": 123,
+  "curl_command": "curl ...",
+  "request_params": {"env_date": ..., "pos_date": ..., "books": [...], "time_of_day": ...},
+  "section_params": {...} or null,
+  "cache_hit": true/false,
+  "server_status": "running",
+  "error": false,
+  "error_stack": "",
+  "sections": {
+    "futures": {"data": {...}, "metadata": {...}, "error_stack": ""},
+    "bonds": {"data": {...}, "metadata": {...}, "error_stack": ""}
+  }
+}
+
+Error response (param validation failed):
+{
+  "request_id": "uuid",
+  "request_timestamp": "ISO timestamp",
+  "duration_ms": 1,
+  "curl_command": null,
+  "request_params": null,
+  "section_params": null,
+  "cache_hit": false,
+  "server_status": "running",
+  "error": true,
+  "error_stack": "Traceback ...",
+  "sections": null
+}
+
+Section error (section function raised exception):
+- Top-level error=false
+- Individual section has error_stack with traceback
+- Other sections still return data

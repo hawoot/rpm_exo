@@ -183,9 +183,9 @@ function GridTable({ data, columns: initialColumns, totals, label }: GridTablePr
       <div
         style={{
           display: 'flex',
-          justifyContent: 'space-between',
           alignItems: 'center',
           marginBottom: '8px',
+          gap: '12px',
         }}
       >
         {label && (

@@ -2,12 +2,11 @@
  * Metadata Component - Shows API response metadata + section-specific metadata
  *
  * Displays:
- * - Data source info
  * - Request/response timing
  * - Section-specific metadata (e.g., futures.metadata)
  */
 
-function Metadata({ apiData, dataSource, currentSection }) {
+function Metadata({ apiData, currentSection }) {
   if (!apiData) return null
 
   // Get section-specific metadata
@@ -20,12 +19,6 @@ function Metadata({ apiData, dataSource, currentSection }) {
     'Duration': apiData.duration_s ? `${apiData.duration_s}s` : '-',
     'Cache Hit': apiData.cache_hit ? 'Yes' : 'No',
     'Error': apiData.error ? 'Yes' : 'No',
-  }
-
-  // Data source info
-  const sourceInfo = {
-    'Source': dataSource.type === 'mock' ? 'Mock Data' : 'Live API',
-    'Location': dataSource.type === 'mock' ? dataSource.file : dataSource.url,
   }
 
   return (
@@ -43,18 +36,6 @@ function Metadata({ apiData, dataSource, currentSection }) {
       }}>
         <span style={{ fontSize: '10px' }}>▶</span>
         Metadata
-        {sectionMetadata?.status && (
-          <span style={{
-            fontSize: '11px',
-            padding: '2px 6px',
-            backgroundColor: sectionMetadata.status === 'ok' ? '#dcfce7' : '#fef2f2',
-            color: sectionMetadata.status === 'ok' ? '#166534' : '#dc2626',
-            borderRadius: '4px',
-            marginLeft: '8px',
-          }}>
-            {sectionMetadata.status}
-          </span>
-        )}
       </summary>
 
       <div style={{
@@ -131,37 +112,6 @@ function Metadata({ apiData, dataSource, currentSection }) {
           </div>
         </div>
 
-        {/* Data Source */}
-        <div>
-          <h4 style={{
-            fontSize: '11px',
-            fontWeight: 600,
-            color: '#6b7280',
-            textTransform: 'uppercase',
-            marginBottom: '8px',
-          }}>
-            Data Source
-          </h4>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-            gap: '8px',
-          }}>
-            {Object.entries(sourceInfo).map(([key, value]) => (
-              <div key={key} style={{ fontSize: '12px' }}>
-                <span style={{ color: '#6b7280' }}>{key}: </span>
-                <span style={{
-                  color: '#1f2937',
-                  fontFamily: key === 'Location' ? 'monospace' : 'inherit',
-                  fontSize: key === 'Location' ? '11px' : '12px',
-                }}>
-                  {value || '-'}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-
         {/* CURL command */}
         {apiData.curl_command && (
           <div>
@@ -172,7 +122,7 @@ function Metadata({ apiData, dataSource, currentSection }) {
               textTransform: 'uppercase',
               marginBottom: '8px',
             }}>
-              Reproducible Command
+              Repro Command
             </h4>
             <pre style={{
               backgroundColor: '#1f2937',

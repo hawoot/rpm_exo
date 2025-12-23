@@ -188,7 +188,10 @@ function ParamsForm({
 
         <button
           type="button"
-          onClick={onSubmit}
+          onClick={() => {
+            onSubmit()
+            setIsCollapsed(true)
+          }}
           disabled={isLoading}
           style={{
             padding: '8px 20px',
@@ -480,7 +483,10 @@ function ParamsForm({
           {/* Submit button */}
           <button
             type="button"
-            onClick={onSubmit}
+            onClick={() => {
+              onSubmit()
+              setIsCollapsed(true)
+            }}
             disabled={isLoading}
             style={{
               padding: '8px 24px',

@@ -6,7 +6,7 @@
  * - Content (right): Header with params form + section content
  */
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 
 // Import section and grid configs
 import summarySection from '../config/sections/summary.json'
@@ -44,6 +44,9 @@ function App() {
   // Current section state
   const [currentSection, setCurrentSection] = useState('futures')
 
+  // Ref for main content area (for scroll buttons)
+  const mainContentRef = useRef(null)
+
   // Data hook
   const {
     data: apiData,
@@ -51,7 +54,6 @@ function App() {
     error,
     params,
     setParams,
-    dataSource,
     apiConfig,
     selectedEnv,
     setSelectedEnv,
@@ -63,6 +65,18 @@ function App() {
 
   // Get current section config
   const section = sectionConfigs[currentSection]
+
+  // Scroll functions
+  const scrollToTop = () => {
+    mainContentRef.current?.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const scrollToBottom = () => {
+    mainContentRef.current?.scrollTo({
+      top: mainContentRef.current.scrollHeight,
+      behavior: 'smooth'
+    })
+  }
 
   return (
     <div style={{
@@ -89,27 +103,103 @@ function App() {
           padding: '16px 24px',
           borderBottom: '1px solid #e5e7eb',
           backgroundColor: '#ffffff',
+          display: 'flex',
+          gap: '12px',
+          alignItems: 'flex-start',
         }}>
-          <ParamsForm
-            params={params}
-            onParamsChange={setParams}
-            onSubmit={refresh}
-            isLoading={isLoading}
-            apiConfig={apiConfig}
-            selectedEnv={selectedEnv}
-            onEnvChange={setSelectedEnv}
-            customUrl={customUrl}
-            onCustomUrlChange={setCustomUrl}
-          />
+          <div style={{ flex: 1 }}>
+            <ParamsForm
+              params={params}
+              onParamsChange={setParams}
+              onSubmit={refresh}
+              isLoading={isLoading}
+              apiConfig={apiConfig}
+              selectedEnv={selectedEnv}
+              onEnvChange={setSelectedEnv}
+              customUrl={customUrl}
+              onCustomUrlChange={setCustomUrl}
+            />
+          </div>
+
+          {/* Scroll buttons */}
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '2px',
+          }}>
+            <button
+              onClick={scrollToTop}
+              title="Scroll to top"
+              style={{
+                width: '24px',
+                height: '16px',
+                borderRadius: '3px',
+                border: '1px solid #d1d5db',
+                backgroundColor: '#ffffff',
+                color: '#374151',
+                fontSize: '10px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'all 0.15s',
+                padding: 0,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#3b82f6'
+                e.currentTarget.style.color = '#ffffff'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = '#ffffff'
+                e.currentTarget.style.color = '#374151'
+              }}
+            >
+              ^
+            </button>
+
+            <button
+              onClick={scrollToBottom}
+              title="Scroll to bottom"
+              style={{
+                width: '24px',
+                height: '16px',
+                borderRadius: '3px',
+                border: '1px solid #d1d5db',
+                backgroundColor: '#ffffff',
+                color: '#374151',
+                fontSize: '10px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'all 0.15s',
+                padding: 0,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#3b82f6'
+                e.currentTarget.style.color = '#ffffff'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = '#ffffff'
+                e.currentTarget.style.color = '#374151'
+              }}
+            >
+              v
+            </button>
+          </div>
         </header>
 
         {/* Content area */}
-        <main style={{
-          flex: 1,
-          overflow: 'auto',
-          padding: '24px',
-          backgroundColor: '#f9fafb',
-        }}>
+        <main
+          ref={mainContentRef}
+          style={{
+            flex: 1,
+            overflow: 'auto',
+            padding: '24px',
+            backgroundColor: '#f9fafb',
+            position: 'relative',
+          }}
+        >
           {/* Section title */}
           <h2 style={{
             fontSize: '20px',
@@ -186,7 +276,7 @@ function App() {
           ))}
 
           {/* Metadata section (collapsed by default) */}
-          <Metadata apiData={apiData} dataSource={dataSource} currentSection={currentSection} />
+          <Metadata apiData={apiData} currentSection={currentSection} />
         </main>
       </div>
     </div>

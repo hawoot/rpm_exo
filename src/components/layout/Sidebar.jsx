@@ -2,13 +2,27 @@
  * Sidebar Component - Navigation for sections
  *
  * Features:
- * - Search bar to filter sections
+ * - Search bar to filter sections AND grid/component names
  * - Collapsible nav groups (collapsed by default)
  * - Active section highlighting
  */
 
 import { useState, useMemo } from 'react'
 import sectionsIndex from '../../../config/sections/_index.json'
+
+// Import grid configs for extended search
+import futuresPositionGrid from '../../../config/grids/futures-position.json'
+import futuresPnlCard from '../../../config/grids/futures-pnl-card.json'
+import futuresDv01Card from '../../../config/grids/futures-dv01-card.json'
+import bondsPositionGrid from '../../../config/grids/bonds-position.json'
+
+// Map grid IDs to their configs (for search)
+const gridConfigs = {
+  'futures-position': futuresPositionGrid,
+  'futures-pnl-card': futuresPnlCard,
+  'futures-dv01-card': futuresDv01Card,
+  'bonds-position': bondsPositionGrid,
+}
 
 function Sidebar({ currentSection, onSectionChange, sectionConfigs }) {
   const { nav_groups, sections } = sectionsIndex
@@ -49,7 +63,7 @@ function Sidebar({ currentSection, onSectionChange, sectionConfigs }) {
     return grouped
   }, [sectionConfigs, nav_groups, sections])
 
-  // Filter sections based on search
+  // Filter sections based on search (searches section names AND grid/component names)
   const filteredSections = useMemo(() => {
     if (!searchQuery.trim()) return null
 
@@ -58,8 +72,32 @@ function Sidebar({ currentSection, onSectionChange, sectionConfigs }) {
 
     sections.forEach(sectionId => {
       const config = sectionConfigs[sectionId]
-      if (config && config.label.toLowerCase().includes(query)) {
-        results.push(config)
+      if (!config) return
+
+      // Check if section label matches
+      const sectionMatches = config.label.toLowerCase().includes(query)
+
+      // Check if any grid/component in this section matches
+      let gridMatches = false
+      let matchingGrids = []
+
+      if (config.layout) {
+        config.layout.forEach(row => {
+          row.grids?.forEach(gridId => {
+            const gridConfig = gridConfigs[gridId]
+            if (gridConfig?.label?.toLowerCase().includes(query)) {
+              gridMatches = true
+              matchingGrids.push(gridConfig.label)
+            }
+          })
+        })
+      }
+
+      if (sectionMatches || gridMatches) {
+        results.push({
+          ...config,
+          matchingGrids: gridMatches ? matchingGrids : null,
+        })
       }
     })
 
@@ -104,7 +142,7 @@ function Sidebar({ currentSection, onSectionChange, sectionConfigs }) {
       <div style={{ padding: '12px 12px 8px' }}>
         <input
           type="text"
-          placeholder="Search sections..."
+          placeholder="Search sections & grids..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           style={{
@@ -241,7 +279,17 @@ function SectionButton({ section, isActive, onClick, indent = false }) {
         transition: 'background-color 0.1s, color 0.1s',
       }}
     >
-      {section.label}
+      <div>{section.label}</div>
+      {/* Show matching grids when search matched via grid name */}
+      {section.matchingGrids && section.matchingGrids.length > 0 && (
+        <div style={{
+          fontSize: '10px',
+          color: '#9ca3af',
+          marginTop: '2px',
+        }}>
+          → {section.matchingGrids.join(', ')}
+        </div>
+      )}
     </button>
   )
 }

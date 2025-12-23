@@ -2,10 +2,11 @@
  * GridTable Component - Feature-rich data table
  *
  * Features:
+ * - Column sorting (click header to sort)
  * - Row and column hover highlighting
  * - Column filtering (text contains, numeric comparison)
- * - Copy to clipboard (entire table)
- * - Resizable columns (drag column borders)
+ * - Copy to clipboard
+ * - Resizable columns
  */
 
 import { useState, useMemo, useRef } from 'react'
@@ -15,6 +16,9 @@ function GridTable({ data, columns: initialColumns, totals, label }) {
   // Hover state
   const [hoveredRow, setHoveredRow] = useState(null)
   const [hoveredCol, setHoveredCol] = useState(null)
+
+  // Sort state: { field: string, direction: 'asc' | 'desc' } or null
+  const [sortConfig, setSortConfig] = useState(null)
 
   // Filter state
   const [filters, setFilters] = useState({})
@@ -74,10 +78,58 @@ function GridTable({ data, columns: initialColumns, totals, label }) {
     })
   }, [data, filters, initialColumns])
 
+  // Sort data
+  const sortedData = useMemo(() => {
+    if (!sortConfig) return filteredData
+
+    const { field, direction } = sortConfig
+    const col = initialColumns.find(c => c.field === field)
+    const isNumeric = col?.format === 'integer' || col?.format === 'decimal_2' || col?.format === 'decimal_4'
+
+    return [...filteredData].sort((a, b) => {
+      const aVal = a[field]
+      const bVal = b[field]
+
+      // Handle nulls
+      if (aVal == null && bVal == null) return 0
+      if (aVal == null) return direction === 'asc' ? 1 : -1
+      if (bVal == null) return direction === 'asc' ? -1 : 1
+
+      // Compare
+      let comparison = 0
+      if (isNumeric) {
+        comparison = Number(aVal) - Number(bVal)
+      } else {
+        comparison = String(aVal).localeCompare(String(bVal))
+      }
+
+      return direction === 'asc' ? comparison : -comparison
+    })
+  }, [filteredData, sortConfig, initialColumns])
+
+  // Handle sort
+  const handleSort = (field) => {
+    setSortConfig(current => {
+      if (current?.field !== field) {
+        return { field, direction: 'asc' }
+      }
+      if (current.direction === 'asc') {
+        return { field, direction: 'desc' }
+      }
+      return null // Third click clears sort
+    })
+  }
+
+  // Get sort indicator
+  const getSortIndicator = (field) => {
+    if (sortConfig?.field !== field) return ' ↕'
+    return sortConfig.direction === 'asc' ? ' ↑' : ' ↓'
+  }
+
   // Copy to clipboard
   const copyToClipboard = () => {
     const headers = initialColumns.map(c => c.label).join('\t')
-    const rows = filteredData.map(row =>
+    const rows = sortedData.map(row =>
       initialColumns.map(c => row[c.field] ?? '').join('\t')
     ).join('\n')
 
@@ -99,11 +151,15 @@ function GridTable({ data, columns: initialColumns, totals, label }) {
     setFilters(prev => ({ ...prev, [field]: value }))
   }
 
-  const clearFilters = () => setFilters({})
+  const clearFilters = () => {
+    setFilters({})
+    setSortConfig(null)
+  }
 
   // Resize handlers
   const startResize = (e, field) => {
     e.preventDefault()
+    e.stopPropagation()
     resizing.current = { field, startX: e.clientX, startWidth: columnWidths[field] }
     document.addEventListener('mousemove', handleResize)
     document.addEventListener('mouseup', stopResize)
@@ -149,9 +205,9 @@ function GridTable({ data, columns: initialColumns, totals, label }) {
         {label && (
           <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#374151', margin: 0 }}>
             {label}
-            {hasActiveFilters && (
+            {(hasActiveFilters || sortConfig) && (
               <span style={{ marginLeft: '8px', fontSize: '11px', color: '#6b7280' }}>
-                ({filteredData.length} of {data.length})
+                ({sortedData.length} of {data.length})
               </span>
             )}
           </h3>
@@ -173,7 +229,7 @@ function GridTable({ data, columns: initialColumns, totals, label }) {
             {showFilters ? '▲ Filters' : '▼ Filters'}
           </button>
 
-          {hasActiveFilters && (
+          {(hasActiveFilters || sortConfig) && (
             <button
               onClick={clearFilters}
               style={{
@@ -185,7 +241,7 @@ function GridTable({ data, columns: initialColumns, totals, label }) {
                 cursor: 'pointer',
               }}
             >
-              Clear
+              Reset
             </button>
           )}
 
@@ -227,11 +283,12 @@ function GridTable({ data, columns: initialColumns, totals, label }) {
               {initialColumns.map((col, colIndex) => (
                 <th
                   key={col.field}
+                  onClick={() => handleSort(col.field)}
                   style={{
                     padding: '8px 12px',
                     textAlign: col.format === 'text' ? 'left' : 'right',
                     backgroundColor: getCellBackground(-1, colIndex, true),
-                    color: '#374151',
+                    color: sortConfig?.field === col.field ? '#1d4ed8' : '#374151',
                     fontWeight: 600,
                     fontSize: '12px',
                     whiteSpace: 'nowrap',
@@ -239,12 +296,19 @@ function GridTable({ data, columns: initialColumns, totals, label }) {
                     width: `${columnWidths[col.field]}px`,
                     minWidth: `${columnWidths[col.field]}px`,
                     position: 'relative',
-                    cursor: 'default',
+                    cursor: 'pointer',
                     transition: 'background-color 0.1s',
+                    userSelect: 'none',
                   }}
                   onMouseEnter={() => setHoveredCol(colIndex)}
                 >
                   {col.label}
+                  <span style={{
+                    opacity: sortConfig?.field === col.field ? 1 : 0.3,
+                    fontSize: '10px',
+                  }}>
+                    {getSortIndicator(col.field)}
+                  </span>
                   {/* Resize handle */}
                   <div
                     style={{
@@ -256,6 +320,7 @@ function GridTable({ data, columns: initialColumns, totals, label }) {
                       cursor: 'col-resize',
                     }}
                     onMouseDown={(e) => startResize(e, col.field)}
+                    onClick={(e) => e.stopPropagation()}
                   />
                 </th>
               ))}
@@ -294,7 +359,7 @@ function GridTable({ data, columns: initialColumns, totals, label }) {
           </thead>
 
           <tbody>
-            {filteredData.map((row, rowIndex) => (
+            {sortedData.map((row, rowIndex) => (
               <tr
                 key={rowIndex}
                 onMouseEnter={() => setHoveredRow(rowIndex)}
@@ -317,7 +382,7 @@ function GridTable({ data, columns: initialColumns, totals, label }) {
               </tr>
             ))}
 
-            {filteredData.length === 0 && (
+            {sortedData.length === 0 && (
               <tr>
                 <td
                   colSpan={initialColumns.length}
@@ -328,7 +393,7 @@ function GridTable({ data, columns: initialColumns, totals, label }) {
               </tr>
             )}
 
-            {totals && filteredData.length > 0 && (
+            {totals && sortedData.length > 0 && (
               <tr
                 onMouseEnter={() => setHoveredRow('totals')}
                 style={{ fontWeight: 600 }}

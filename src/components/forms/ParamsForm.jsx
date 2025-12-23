@@ -5,10 +5,11 @@
  * - Collapsible (saves screen space when not needed)
  * - Environment selector with editable URL
  * - Date inputs, time of day, books multi-select
+ * - Predefined book groups (Main, MGMT, etc.)
  * - Bypass cache option
  */
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 
 // Available books (in production, this might come from an API)
 const AVAILABLE_BOOKS = [
@@ -20,6 +21,15 @@ const AVAILABLE_BOOKS = [
   'FX_SPOT',
   'FX_OPTIONS',
 ]
+
+// Predefined book groups - quick selection shortcuts
+const BOOK_GROUPS = {
+  'Main': ['OfficialCUPSBook', 'RATES_EUR', 'RATES_USD', 'RATES_GBP'],
+  'MGMT': ['OfficialCUPSBook'],
+  'Rates': ['RATES_EUR', 'RATES_USD', 'RATES_GBP'],
+  'FX': ['FX_SPOT', 'FX_OPTIONS'],
+  'All': AVAILABLE_BOOKS,
+}
 
 const TIME_OF_DAY_OPTIONS = ['Open', 'Close', 'Live']
 
@@ -37,6 +47,38 @@ function ParamsForm({
 }) {
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [isBookDropdownOpen, setIsBookDropdownOpen] = useState(false)
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 })
+  const bookButtonRef = useRef(null)
+  const dropdownRef = useRef(null)
+
+  // Calculate dropdown position when opened
+  useEffect(() => {
+    if (isBookDropdownOpen && bookButtonRef.current) {
+      const rect = bookButtonRef.current.getBoundingClientRect()
+      setDropdownPosition({
+        top: rect.bottom + 2,
+        left: rect.left,
+        width: rect.width,
+      })
+    }
+  }, [isBookDropdownOpen])
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        isBookDropdownOpen &&
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target) &&
+        bookButtonRef.current &&
+        !bookButtonRef.current.contains(event.target)
+      ) {
+        setIsBookDropdownOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [isBookDropdownOpen])
 
   // Format date for input (YYYYMMDD -> YYYY-MM-DD)
   const formatDateForInput = (dateStr) => {
@@ -78,6 +120,23 @@ function ParamsForm({
     onParamsChange({
       ...params,
       books: newBooks,
+    })
+  }
+
+  // Select all books in a predefined group
+  const handleGroupSelect = (groupName) => {
+    const groupBooks = BOOK_GROUPS[groupName] || []
+    onParamsChange({
+      ...params,
+      books: [...groupBooks],
+    })
+  }
+
+  // Clear all selected books
+  const handleClearBooks = () => {
+    onParamsChange({
+      ...params,
+      books: [],
     })
   }
 
@@ -287,9 +346,10 @@ function ParamsForm({
           </div>
 
           {/* Books multi-select */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', position: 'relative' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
             <label style={{ fontSize: '12px', color: '#6b7280' }}>Books</label>
             <button
+              ref={bookButtonRef}
               type="button"
               onClick={() => setIsBookDropdownOpen(!isBookDropdownOpen)}
               style={{
@@ -310,20 +370,71 @@ function ParamsForm({
               <span>▾</span>
             </button>
 
+            {/* Fixed-position dropdown that can escape container */}
             {isBookDropdownOpen && (
-              <div style={{
-                position: 'absolute',
-                top: '100%',
-                left: 0,
-                right: 0,
-                backgroundColor: '#ffffff',
-                border: '1px solid #d1d5db',
-                borderRadius: '4px',
-                boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                zIndex: 100,
-                maxHeight: '200px',
-                overflowY: 'auto',
-              }}>
+              <div
+                ref={dropdownRef}
+                style={{
+                  position: 'fixed',
+                  top: dropdownPosition.top,
+                  left: dropdownPosition.left,
+                  width: Math.max(dropdownPosition.width, 220),
+                  backgroundColor: '#ffffff',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '4px',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                  zIndex: 1000,
+                  maxHeight: '320px',
+                  overflowY: 'auto',
+                }}
+              >
+                {/* Book group quick-select buttons */}
+                <div style={{
+                  padding: '8px',
+                  borderBottom: '1px solid #e5e7eb',
+                  backgroundColor: '#f9fafb',
+                }}>
+                  <div style={{ fontSize: '10px', color: '#6b7280', marginBottom: '6px', textTransform: 'uppercase' }}>
+                    Quick Select
+                  </div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                    {Object.keys(BOOK_GROUPS).map(groupName => (
+                      <button
+                        key={groupName}
+                        type="button"
+                        onClick={() => handleGroupSelect(groupName)}
+                        style={{
+                          padding: '3px 8px',
+                          fontSize: '11px',
+                          border: '1px solid #d1d5db',
+                          borderRadius: '3px',
+                          backgroundColor: '#ffffff',
+                          cursor: 'pointer',
+                          color: '#374151',
+                        }}
+                      >
+                        {groupName}
+                      </button>
+                    ))}
+                    <button
+                      type="button"
+                      onClick={handleClearBooks}
+                      style={{
+                        padding: '3px 8px',
+                        fontSize: '11px',
+                        border: '1px solid #fecaca',
+                        borderRadius: '3px',
+                        backgroundColor: '#fef2f2',
+                        cursor: 'pointer',
+                        color: '#dc2626',
+                      }}
+                    >
+                      Clear
+                    </button>
+                  </div>
+                </div>
+
+                {/* Individual book checkboxes */}
                 {AVAILABLE_BOOKS.map(book => (
                   <label
                     key={book}

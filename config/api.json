@@ -1,0 +1,25 @@
+{
+  "environments": {
+    "local": {
+      "label": "Local",
+      "base_url": "http://localhost:8000"
+    },
+    "dev": {
+      "label": "Development",
+      "base_url": "https://rpm-dev.yourcompany.com"
+    },
+    "uat": {
+      "label": "UAT",
+      "base_url": "https://rpm-uat.yourcompany.com"
+    },
+    "prod": {
+      "label": "Production",
+      "base_url": "https://rpm.yourcompany.com"
+    }
+  },
+  "default_environment": "local",
+  "endpoints": {
+    "pos_env": "/pos_env"
+  },
+  "timeout_ms": 30000
+}

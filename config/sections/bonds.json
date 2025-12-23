@@ -1,0 +1,13 @@
+{
+  "id": "bonds",
+  "label": "Bonds",
+  "nav_group": "bonds",
+  "order": 10,
+
+  "layout": [
+    {
+      "row": 1,
+      "grids": ["bonds-position"]
+    }
+  ]
+}

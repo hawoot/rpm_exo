@@ -1,0 +1,13 @@
+{
+  "id": "summary",
+  "label": "Summary",
+  "nav_group": "overview",
+  "order": 1,
+
+  "layout": [
+    {
+      "row": 1,
+      "grids": ["futures-pnl-card", "futures-dv01-card"]
+    }
+  ]
+}

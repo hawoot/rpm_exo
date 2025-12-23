@@ -1,0 +1,12 @@
+{
+  "id": "futures-pnl-card",
+  "label": "Total P&L",
+
+  "data_path": "response_data.futures.data.summary.total_pnl",
+
+  "display_type": "card",
+
+  "format": "integer",
+  "background": "pnl",
+  "text_color": "sign-based"
+}

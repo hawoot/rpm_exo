@@ -1,0 +1,16 @@
+# Dependencies (like venv/ in Python)
+node_modules
+
+# Build output (like dist/ or build/ in Python)
+dist
+
+# Local env files
+.env.local
+.env.*.local
+
+# Editor directories
+.vscode
+.idea
+
+# OS files
+.DS_Store

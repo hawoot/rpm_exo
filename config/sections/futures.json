@@ -1,0 +1,17 @@
+{
+  "id": "futures",
+  "label": "Futures",
+  "nav_group": "rates",
+  "order": 10,
+
+  "layout": [
+    {
+      "row": 1,
+      "grids": ["futures-pnl-card", "futures-dv01-card"]
+    },
+    {
+      "row": 2,
+      "grids": ["futures-position"]
+    }
+  ]
+}

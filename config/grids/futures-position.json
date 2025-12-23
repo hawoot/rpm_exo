@@ -1,0 +1,55 @@
+{
+  "id": "futures-position",
+  "label": "Futures Position",
+
+  "data_path": "response_data.futures.data.future_position",
+  "totals_path": "response_data.futures.data.future_totals",
+
+  "display_type": "table",
+
+  "columns": [
+    {
+      "field": "instrument",
+      "label": "Instrument",
+      "format": "text",
+      "width": 120,
+      "frozen": true,
+      "background": null,
+      "text_color": "fixed",
+      "text_color_value": "positive"
+    },
+    {
+      "field": "exchange",
+      "label": "Exchange",
+      "format": "text",
+      "width": 80,
+      "background": null,
+      "text_color": "fixed",
+      "text_color_value": "muted"
+    },
+    {
+      "field": "position",
+      "label": "Position",
+      "format": "integer",
+      "width": 100,
+      "background": null,
+      "text_color": "sign-based"
+    },
+    {
+      "field": "dv01",
+      "label": "DV01",
+      "format": "integer",
+      "width": 100,
+      "background": "risk",
+      "text_color": "sign-based"
+    },
+    {
+      "field": "pnl",
+      "label": "P&L",
+      "format": "integer",
+      "width": 120,
+      "background": "pnl",
+      "text_color": "sign-based"
+    }
+  ]
+}

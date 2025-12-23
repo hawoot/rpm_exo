@@ -1,0 +1,12 @@
+{
+  "id": "futures-dv01-card",
+  "label": "Total DV01",
+
+  "data_path": "response_data.futures.data.summary.total_dv01",
+
+  "display_type": "card",
+
+  "format": "integer",
+  "background": "risk",
+  "text_color": "sign-based"
+}

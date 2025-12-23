@@ -1,0 +1,12 @@
+{
+  "nav_groups": [
+    { "id": "overview", "label": "Overview", "order": 1 },
+    { "id": "rates", "label": "Rates", "order": 2 },
+    { "id": "bonds", "label": "Bonds", "order": 3 }
+  ],
+  "sections": [
+    "summary",
+    "futures",
+    "bonds"
+  ]
+}

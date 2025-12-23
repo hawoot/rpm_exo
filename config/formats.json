@@ -1,0 +1,43 @@
+{
+  "text": {},
+
+  "integer": {
+    "decimals": 0,
+    "thousands_separator": true
+  },
+
+  "decimal_2": {
+    "decimals": 2,
+    "thousands_separator": true
+  },
+
+  "decimal_4": {
+    "decimals": 4,
+    "thousands_separator": true
+  },
+
+  "price": {
+    "decimals": 4,
+    "thousands_separator": true
+  },
+
+  "bps": {
+    "decimals": 1,
+    "thousands_separator": false,
+    "suffix": " bps"
+  },
+
+  "percent": {
+    "decimals": 2,
+    "thousands_separator": false,
+    "suffix": "%"
+  },
+
+  "date": {
+    "pattern": "DD-MMM-YY"
+  },
+
+  "datetime": {
+    "pattern": "DD-MMM-YY HH:mm:ss"
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "request_id": "mock-001",
+  "timestamp_request": "2025-12-22T10:00:00Z",
+  "timestamp_response": "2025-12-22T10:00:05Z",
+  "timestamp_data_calculated": "2025-12-22T10:00:04Z",
+  "timestamp_data_cached": null,
+  "lag_s": 0,
+  "duration_s": 5,
+  "cache_hit": false,
+  "error": false,
+  "error_stack": "",
+  "curl_command": "curl http://localhost:8000/pos_env?env_date=20251222",
+  "base_params": {
+    "env_date": "20251222",
+    "pos_date": "20251221",
+    "books": ["OfficialCUPSBook", "EXOTICS"],
+    "time_of_day": "Close"
+  },
+  "section_params": null,
+  "response_data": {
+    "futures": {
+      "data": {
+        "future_position": [
+          { "instrument": "FOATH6", "exchange": "EUREX", "position": -50, "dv01": 4500, "pnl": -23000 },
+          { "instrument": "FGBLH6", "exchange": "EUREX", "position": 100, "dv01": 8200, "pnl": 45000 },
+          { "instrument": "FGBMH6", "exchange": "EUREX", "position": -25, "dv01": 3100, "pnl": -8500 },
+          { "instrument": "FGBSH6", "exchange": "EUREX", "position": 75, "dv01": 2800, "pnl": 12300 },
+          { "instrument": "ZNH6", "exchange": "CME", "position": 200, "dv01": 15600, "pnl": 67800 },
+          { "instrument": "ZBH6", "exchange": "CME", "position": -80, "dv01": 9400, "pnl": -34200 }
+        ],
+        "future_totals": {
+          "position": 220,
+          "dv01": 43600,
+          "pnl": 59400
+        },
+        "summary": {
+          "total_pnl": 59400,
+          "total_dv01": 43600,
+          "position_count": 6
+        }
+      },
+      "metadata": {
+        "last_updated": "2025-12-22T10:00:04Z",
+        "status": "ok",
+        "refresh_duration_ms": 1368,
+        "repro": "python -c \"from rpm import futures; futures.get_positions()\""
+      },
+      "error_stack": ""
+    },
+    "bonds": {
+      "data": {
+        "bond_position": [
+          { "isin": "DE0001102481", "description": "DBR 0 02/15/30", "position": 5000000, "dv01": 4250, "pnl": 18500 },
+          { "isin": "DE0001102580", "description": "DBR 0 08/15/31", "position": -3000000, "dv01": -2890, "pnl": -7200 },
+          { "isin": "FR0014002WK3", "description": "OAT 0.5 05/25/40", "position": 2500000, "dv01": 3100, "pnl": 9800 }
+        ],
+        "bond_totals": {
+          "dv01": 4460,
+          "pnl": 21100
+        }
+      },
+      "metadata": {
+        "last_updated": "2025-12-22T10:00:03Z",
+        "status": "ok",
+        "refresh_duration_ms": 892
+      },
+      "error_stack": ""
+    }
+  }
+}

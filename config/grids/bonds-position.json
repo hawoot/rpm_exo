@@ -1,0 +1,55 @@
+{
+  "id": "bonds-position",
+  "label": "Bond Positions",
+
+  "data_path": "response_data.bonds.data.bond_position",
+  "totals_path": "response_data.bonds.data.bond_totals",
+
+  "display_type": "table",
+
+  "columns": [
+    {
+      "field": "isin",
+      "label": "ISIN",
+      "format": "text",
+      "width": 140,
+      "frozen": true,
+      "background": null,
+      "text_color": "fixed",
+      "text_color_value": "positive"
+    },
+    {
+      "field": "description",
+      "label": "Description",
+      "format": "text",
+      "width": 180,
+      "background": null,
+      "text_color": "fixed",
+      "text_color_value": "muted"
+    },
+    {
+      "field": "position",
+      "label": "Position",
+      "format": "integer",
+      "width": 120,
+      "background": null,
+      "text_color": "sign-based"
+    },
+    {
+      "field": "dv01",
+      "label": "DV01",
+      "format": "integer",
+      "width": 100,
+      "background": "risk",
+      "text_color": "sign-based"
+    },
+    {
+      "field": "pnl",
+      "label": "P&L",
+      "format": "integer",
+      "width": 120,
+      "background": "pnl",
+      "text_color": "sign-based"
+    }
+  ]
+}

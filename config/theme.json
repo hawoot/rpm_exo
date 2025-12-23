@@ -1,0 +1,23 @@
+{
+  "colors": {
+    "backgrounds": {
+      "pnl": "#e6f4ea",
+      "risk": "#e3f2fd",
+      "rate": "#fff8e1",
+      "header": "#f5f5f5",
+      "total": "#eeeeee",
+      "row-even": "#ffffff",
+      "row-odd": "#fafafa",
+      "row-hover": "#f0f0f0"
+    },
+    "text": {
+      "negative": "#dc2626",
+      "positive": "#1f2937",
+      "muted": "#9ca3af"
+    },
+    "border": {
+      "default": "#e5e7eb",
+      "strong": "#d1d5db"
+    }
+  }
+}

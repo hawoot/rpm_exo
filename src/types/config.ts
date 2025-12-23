@@ -6,19 +6,15 @@
 export type FormatType =
   | 'text'
   | 'integer'
-  | 'decimal_2'
-  | 'decimal_4'
-  | 'price'
-  | 'bps'
-  | 'percent'
+  | 'decimal'
   | 'date'
   | 'datetime';
 
 /** Format configuration from formats.json */
 export interface FormatConfig {
+  is_numeric: boolean;
   decimals?: number;
   thousands_separator?: boolean;
-  suffix?: string;
   pattern?: string;
 }
 

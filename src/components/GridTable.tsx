@@ -4,7 +4,14 @@
 
 import { useState, useMemo, useRef } from 'react';
 import Cell from './Cell';
-import type { GridTableProps } from '../types';
+import formatsConfig from '../../config/formats.json';
+import type { GridTableProps, FormatConfig } from '../types';
+
+const formats = formatsConfig as Record<string, FormatConfig>;
+
+const isNumericFormat = (format: string): boolean => {
+  return formats[format]?.is_numeric ?? false;
+};
 
 interface SortConfig {
   field: string;
@@ -48,7 +55,7 @@ function GridTable({ data, columns: initialColumns, totals, label }: GridTablePr
         const cellValue = row[field];
         const col = initialColumns.find((c) => c.field === field);
 
-        if (col?.format === 'integer' || col?.format === 'decimal_2' || col?.format === 'decimal_4') {
+        if (col && isNumericFormat(col.format)) {
           const numValue = Number(cellValue);
           const filterStr = filterValue.trim();
 
@@ -70,7 +77,7 @@ function GridTable({ data, columns: initialColumns, totals, label }: GridTablePr
 
     const { field, direction } = sortConfig;
     const col = initialColumns.find((c) => c.field === field);
-    const isNumeric = col?.format === 'integer' || col?.format === 'decimal_2' || col?.format === 'decimal_4';
+    const isNumeric = col ? isNumericFormat(col.format) : false;
 
     return [...filteredData].sort((a, b) => {
       const aVal = a[field];
@@ -324,7 +331,7 @@ function GridTable({ data, columns: initialColumns, totals, label }: GridTablePr
                   >
                     <input
                       type="text"
-                      placeholder={col.format === 'integer' ? '>0, <100...' : 'Filter...'}
+                      placeholder={isNumericFormat(col.format) ? '>0, <100...' : 'Filter...'}
                       value={filters[col.field] ?? ''}
                       onChange={(e) => handleFilterChange(col.field, e.target.value)}
                       style={{

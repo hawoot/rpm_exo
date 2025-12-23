@@ -1,43 +1,26 @@
 {
-  "text": {},
+  "text": {
+    "is_numeric": false
+  },
+
+  "decimal": {
+    "is_numeric": true,
+    "thousands_separator": true
+  },
 
   "integer": {
+    "is_numeric": true,
     "decimals": 0,
     "thousands_separator": true
   },
 
-  "decimal_2": {
-    "decimals": 2,
-    "thousands_separator": true
-  },
-
-  "decimal_4": {
-    "decimals": 4,
-    "thousands_separator": true
-  },
-
-  "price": {
-    "decimals": 4,
-    "thousands_separator": true
-  },
-
-  "bps": {
-    "decimals": 1,
-    "thousands_separator": false,
-    "suffix": " bps"
-  },
-
-  "percent": {
-    "decimals": 2,
-    "thousands_separator": false,
-    "suffix": "%"
-  },
-
   "date": {
+    "is_numeric": false,
     "pattern": "DD-MMM-YY"
   },
 
   "datetime": {
+    "is_numeric": false,
     "pattern": "DD-MMM-YY HH:mm:ss"
   }
 }

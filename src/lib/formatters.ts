@@ -11,7 +11,7 @@ const formats = formatsConfig as Record<string, FormatConfig>;
  * Format a value using a format type from formats.json
  *
  * @param value - The raw value to format
- * @param formatType - The format type (e.g., "integer", "decimal_2")
+ * @param formatType - The format type (e.g., "integer")
  * @returns The formatted string
  */
 export function formatValue(value: unknown, formatType: string): string {
@@ -19,9 +19,9 @@ export function formatValue(value: unknown, formatType: string): string {
     return '-';
   }
 
-  const config = formats[formatType] ?? {};
+  const config = formats[formatType];
 
-  if (formatType === 'text' || Object.keys(config).length === 0) {
+  if (!config || formatType === 'text') {
     return String(value);
   }
 
@@ -41,10 +41,6 @@ export function formatValue(value: unknown, formatType: string): string {
         parts[0] = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
       }
       formatted = parts.join('.');
-    }
-
-    if (config.suffix !== undefined) {
-      formatted = formatted + config.suffix;
     }
 
     return formatted;

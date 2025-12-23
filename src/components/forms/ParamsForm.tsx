@@ -1,18 +1,11 @@
 /**
  * ParamsForm - Collapsible form for API request parameters
- *
- * Features:
- * - Collapsible (saves screen space when not needed)
- * - Environment selector with editable URL
- * - Date inputs, time of day, books multi-select
- * - Predefined book groups (Main, MGMT, etc.)
- * - Bypass cache option
  */
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect } from 'react';
+import type { ParamsFormProps, TimeOfDay, EnvironmentConfig } from '../../types';
 
-// Available books (in production, this might come from an API)
-const AVAILABLE_BOOKS = [
+const AVAILABLE_BOOKS: string[] = [
   'OfficialCUPSBook',
   'EXOTICS',
   'RATES_EUR',
@@ -20,137 +13,136 @@ const AVAILABLE_BOOKS = [
   'RATES_GBP',
   'FX_SPOT',
   'FX_OPTIONS',
-]
+];
 
-// Predefined book groups - quick selection shortcuts
-const BOOK_GROUPS = {
-  'Main': ['OfficialCUPSBook', 'RATES_EUR', 'RATES_USD', 'RATES_GBP'],
-  'MGMT': ['OfficialCUPSBook'],
-  'Rates': ['RATES_EUR', 'RATES_USD', 'RATES_GBP'],
-  'FX': ['FX_SPOT', 'FX_OPTIONS'],
-  'All': AVAILABLE_BOOKS,
+const BOOK_GROUPS: Record<string, string[]> = {
+  Main: ['OfficialCUPSBook', 'RATES_EUR', 'RATES_USD', 'RATES_GBP'],
+  MGMT: ['OfficialCUPSBook'],
+  Rates: ['RATES_EUR', 'RATES_USD', 'RATES_GBP'],
+  FX: ['FX_SPOT', 'FX_OPTIONS'],
+  All: AVAILABLE_BOOKS,
+};
+
+const TIME_OF_DAY_OPTIONS: TimeOfDay[] = ['Open', 'Close', 'Live'];
+
+interface DropdownPosition {
+  top: number;
+  left: number;
+  width: number;
 }
-
-const TIME_OF_DAY_OPTIONS = ['Open', 'Close', 'Live']
 
 function ParamsForm({
   params,
   onParamsChange,
   onSubmit,
   isLoading,
-  // Environment fields
   apiConfig,
   selectedEnv,
   onEnvChange,
   customUrl,
   onCustomUrlChange,
-}) {
-  const [isCollapsed, setIsCollapsed] = useState(false)
-  const [isBookDropdownOpen, setIsBookDropdownOpen] = useState(false)
-  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 })
-  const bookButtonRef = useRef(null)
-  const dropdownRef = useRef(null)
+}: ParamsFormProps): JSX.Element {
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
+  const [isBookDropdownOpen, setIsBookDropdownOpen] = useState<boolean>(false);
+  const [dropdownPosition, setDropdownPosition] = useState<DropdownPosition>({ top: 0, left: 0, width: 0 });
+  const bookButtonRef = useRef<HTMLButtonElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Calculate dropdown position when opened
   useEffect(() => {
     if (isBookDropdownOpen && bookButtonRef.current) {
-      const rect = bookButtonRef.current.getBoundingClientRect()
+      const rect = bookButtonRef.current.getBoundingClientRect();
       setDropdownPosition({
         top: rect.bottom + 2,
         left: rect.left,
         width: rect.width,
-      })
+      });
     }
-  }, [isBookDropdownOpen])
+  }, [isBookDropdownOpen]);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
-    const handleClickOutside = (event) => {
+    const handleClickOutside = (event: MouseEvent): void => {
       if (
         isBookDropdownOpen &&
         dropdownRef.current &&
-        !dropdownRef.current.contains(event.target) &&
+        !dropdownRef.current.contains(event.target as Node) &&
         bookButtonRef.current &&
-        !bookButtonRef.current.contains(event.target)
+        !bookButtonRef.current.contains(event.target as Node)
       ) {
-        setIsBookDropdownOpen(false)
+        setIsBookDropdownOpen(false);
       }
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [isBookDropdownOpen])
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isBookDropdownOpen]);
 
-  // Format date for input (YYYYMMDD -> YYYY-MM-DD)
-  const formatDateForInput = (dateStr) => {
-    if (!dateStr || dateStr.length !== 8) return ''
-    return `${dateStr.slice(0, 4)}-${dateStr.slice(4, 6)}-${dateStr.slice(6, 8)}`
-  }
+  const formatDateForInput = (dateStr: string): string => {
+    if (!dateStr || dateStr.length !== 8) return '';
+    return `${dateStr.slice(0, 4)}-${dateStr.slice(4, 6)}-${dateStr.slice(6, 8)}`;
+  };
 
-  // Parse date from input (YYYY-MM-DD -> YYYYMMDD)
-  const parseDateFromInput = (dateStr) => {
-    return dateStr.replace(/-/g, '')
-  }
+  const parseDateFromInput = (dateStr: string): string => {
+    return dateStr.replace(/-/g, '');
+  };
 
-  const handleDateChange = (field, value) => {
+  const handleDateChange = (field: 'env_date' | 'pos_date', value: string): void => {
     onParamsChange({
       ...params,
       [field]: parseDateFromInput(value),
-    })
-  }
+    });
+  };
 
-  const handleTimeOfDayChange = (value) => {
+  const handleTimeOfDayChange = (value: string): void => {
     onParamsChange({
       ...params,
-      time_of_day: value,
-    })
-  }
+      time_of_day: value as TimeOfDay,
+    });
+  };
 
-  const handleBypassCacheChange = (checked) => {
+  const handleBypassCacheChange = (checked: boolean): void => {
     onParamsChange({
       ...params,
       bypass_cache: checked,
-    })
-  }
+    });
+  };
 
-  const handleBookToggle = (book) => {
-    const currentBooks = params.books || []
+  const handleBookToggle = (book: string): void => {
+    const currentBooks = params.books ?? [];
     const newBooks = currentBooks.includes(book)
-      ? currentBooks.filter(b => b !== book)
-      : [...currentBooks, book]
+      ? currentBooks.filter((b) => b !== book)
+      : [...currentBooks, book];
     onParamsChange({
       ...params,
       books: newBooks,
-    })
-  }
+    });
+  };
 
-  // Select all books in a predefined group
-  const handleGroupSelect = (groupName) => {
-    const groupBooks = BOOK_GROUPS[groupName] || []
+  const handleGroupSelect = (groupName: string): void => {
+    const groupBooks = BOOK_GROUPS[groupName] ?? [];
     onParamsChange({
       ...params,
       books: [...groupBooks],
-    })
-  }
+    });
+  };
 
-  // Clear all selected books
-  const handleClearBooks = () => {
+  const handleClearBooks = (): void => {
     onParamsChange({
       ...params,
       books: [],
-    })
-  }
+    });
+  };
 
-  const effectiveUrl = customUrl || apiConfig.environments[selectedEnv]?.base_url
+  const effectiveUrl = customUrl || apiConfig.environments[selectedEnv]?.base_url;
 
-  // Collapsed view - just a summary bar
   if (isCollapsed) {
     return (
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: '16px',
-      }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '16px',
+        }}
+      >
         <button
           onClick={() => setIsCollapsed(false)}
           style={{
@@ -172,15 +164,17 @@ function ParamsForm({
           <span style={{ color: '#9ca3af' }}>|</span>
           <span>{params.time_of_day}</span>
           <span style={{ color: '#9ca3af' }}>|</span>
-          <span>{params.books?.length || 0} books</span>
+          <span>{params.books?.length ?? 0} books</span>
           {params.bypass_cache && (
-            <span style={{
-              fontSize: '10px',
-              padding: '2px 6px',
-              backgroundColor: '#fef3c7',
-              color: '#92400e',
-              borderRadius: '4px',
-            }}>
+            <span
+              style={{
+                fontSize: '10px',
+                padding: '2px 6px',
+                backgroundColor: '#fef3c7',
+                color: '#92400e',
+                borderRadius: '4px',
+              }}
+            >
               No Cache
             </span>
           )}
@@ -189,8 +183,8 @@ function ParamsForm({
         <button
           type="button"
           onClick={() => {
-            onSubmit()
-            setIsCollapsed(true)
+            onSubmit();
+            setIsCollapsed(true);
           }}
           disabled={isLoading}
           style={{
@@ -207,29 +201,29 @@ function ParamsForm({
           {isLoading ? 'Loading...' : 'Fetch'}
         </button>
       </div>
-    )
+    );
   }
 
-  // Expanded view - full form
   return (
-    <div style={{
-      backgroundColor: '#ffffff',
-      border: '1px solid #e5e7eb',
-      borderRadius: '8px',
-      overflow: 'hidden',
-    }}>
-      {/* Collapse button */}
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: '8px 16px',
-        backgroundColor: '#f9fafb',
-        borderBottom: '1px solid #e5e7eb',
-      }}>
-        <span style={{ fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>
-          REQUEST PARAMETERS
-        </span>
+    <div
+      style={{
+        backgroundColor: '#ffffff',
+        border: '1px solid #e5e7eb',
+        borderRadius: '8px',
+        overflow: 'hidden',
+      }}
+    >
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: '8px 16px',
+          backgroundColor: '#f9fafb',
+          borderBottom: '1px solid #e5e7eb',
+        }}
+      >
+        <span style={{ fontSize: '12px', fontWeight: 600, color: '#6b7280' }}>REQUEST PARAMETERS</span>
         <button
           onClick={() => setIsCollapsed(true)}
           style={{
@@ -246,18 +240,17 @@ function ParamsForm({
       </div>
 
       <div style={{ padding: '16px' }}>
-        {/* Environment row */}
-        <div style={{
-          display: 'flex',
-          gap: '12px',
-          alignItems: 'center',
-          marginBottom: '16px',
-          paddingBottom: '16px',
-          borderBottom: '1px solid #e5e7eb',
-        }}>
-          <label style={{ fontSize: '12px', color: '#6b7280', minWidth: '70px' }}>
-            Environment
-          </label>
+        <div
+          style={{
+            display: 'flex',
+            gap: '12px',
+            alignItems: 'center',
+            marginBottom: '16px',
+            paddingBottom: '16px',
+            borderBottom: '1px solid #e5e7eb',
+          }}
+        >
+          <label style={{ fontSize: '12px', color: '#6b7280', minWidth: '70px' }}>Environment</label>
           <select
             value={selectedEnv}
             onChange={(e) => onEnvChange(e.target.value)}
@@ -270,7 +263,9 @@ function ParamsForm({
             }}
           >
             {Object.entries(apiConfig.environments).map(([key, env]) => (
-              <option key={key} value={key}>{env.label}</option>
+              <option key={key} value={key}>
+                {(env as EnvironmentConfig).label}
+              </option>
             ))}
           </select>
           <input
@@ -289,14 +284,14 @@ function ParamsForm({
           />
         </div>
 
-        {/* Params row */}
-        <div style={{
-          display: 'flex',
-          gap: '16px',
-          alignItems: 'flex-end',
-          flexWrap: 'wrap',
-        }}>
-          {/* Env Date */}
+        <div
+          style={{
+            display: 'flex',
+            gap: '16px',
+            alignItems: 'flex-end',
+            flexWrap: 'wrap',
+          }}
+        >
           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
             <label style={{ fontSize: '12px', color: '#6b7280' }}>Env Date</label>
             <input
@@ -312,7 +307,6 @@ function ParamsForm({
             />
           </div>
 
-          {/* Pos Date */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
             <label style={{ fontSize: '12px', color: '#6b7280' }}>Pos Date</label>
             <input
@@ -328,7 +322,6 @@ function ParamsForm({
             />
           </div>
 
-          {/* Time of Day */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
             <label style={{ fontSize: '12px', color: '#6b7280' }}>Time of Day</label>
             <select
@@ -342,13 +335,14 @@ function ParamsForm({
                 minWidth: '90px',
               }}
             >
-              {TIME_OF_DAY_OPTIONS.map(opt => (
-                <option key={opt} value={opt}>{opt}</option>
+              {TIME_OF_DAY_OPTIONS.map((opt) => (
+                <option key={opt} value={opt}>
+                  {opt}
+                </option>
               ))}
             </select>
           </div>
 
-          {/* Books multi-select */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
             <label style={{ fontSize: '12px', color: '#6b7280' }}>Books</label>
             <button
@@ -373,7 +367,6 @@ function ParamsForm({
               <span>▾</span>
             </button>
 
-            {/* Fixed-position dropdown that can escape container */}
             {isBookDropdownOpen && (
               <div
                 ref={dropdownRef}
@@ -391,17 +384,18 @@ function ParamsForm({
                   overflowY: 'auto',
                 }}
               >
-                {/* Book group quick-select buttons */}
-                <div style={{
-                  padding: '8px',
-                  borderBottom: '1px solid #e5e7eb',
-                  backgroundColor: '#f9fafb',
-                }}>
+                <div
+                  style={{
+                    padding: '8px',
+                    borderBottom: '1px solid #e5e7eb',
+                    backgroundColor: '#f9fafb',
+                  }}
+                >
                   <div style={{ fontSize: '10px', color: '#6b7280', marginBottom: '6px', textTransform: 'uppercase' }}>
                     Quick Select
                   </div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
-                    {Object.keys(BOOK_GROUPS).map(groupName => (
+                    {Object.keys(BOOK_GROUPS).map((groupName) => (
                       <button
                         key={groupName}
                         type="button"
@@ -437,8 +431,7 @@ function ParamsForm({
                   </div>
                 </div>
 
-                {/* Individual book checkboxes */}
-                {AVAILABLE_BOOKS.map(book => (
+                {AVAILABLE_BOOKS.map((book) => (
                   <label
                     key={book}
                     style={{
@@ -453,7 +446,7 @@ function ParamsForm({
                   >
                     <input
                       type="checkbox"
-                      checked={params.books?.includes(book) || false}
+                      checked={params.books?.includes(book) ?? false}
                       onChange={() => handleBookToggle(book)}
                     />
                     {book}
@@ -463,29 +456,29 @@ function ParamsForm({
             )}
           </div>
 
-          {/* Bypass Cache */}
-          <label style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            fontSize: '13px',
-            cursor: 'pointer',
-            padding: '6px 0',
-          }}>
+          <label
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              fontSize: '13px',
+              cursor: 'pointer',
+              padding: '6px 0',
+            }}
+          >
             <input
               type="checkbox"
-              checked={params.bypass_cache || false}
+              checked={params.bypass_cache ?? false}
               onChange={(e) => handleBypassCacheChange(e.target.checked)}
             />
             <span style={{ color: '#6b7280' }}>Bypass Cache</span>
           </label>
 
-          {/* Submit button */}
           <button
             type="button"
             onClick={() => {
-              onSubmit()
-              setIsCollapsed(true)
+              onSubmit();
+              setIsCollapsed(true);
             }}
             disabled={isLoading}
             style={{
@@ -504,15 +497,16 @@ function ParamsForm({
           </button>
         </div>
 
-        {/* Selected books pills */}
-        {params.books?.length > 0 && (
-          <div style={{
-            marginTop: '12px',
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: '6px',
-          }}>
-            {params.books.map(book => (
+        {params.books && params.books.length > 0 && (
+          <div
+            style={{
+              marginTop: '12px',
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '6px',
+            }}
+          >
+            {params.books.map((book) => (
               <span
                 key={book}
                 style={{
@@ -549,7 +543,7 @@ function ParamsForm({
         )}
       </div>
     </div>
-  )
+  );
 }
 
-export default ParamsForm
+export default ParamsForm;

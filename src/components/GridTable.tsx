@@ -1,207 +1,193 @@
 /**
  * GridTable Component - Feature-rich data table
- *
- * Features:
- * - Column sorting (click header to sort)
- * - Row and column hover highlighting
- * - Column filtering (text contains, numeric comparison)
- * - Copy to clipboard
- * - Resizable columns
  */
 
-import { useState, useMemo, useRef } from 'react'
-import Cell from './Cell'
+import { useState, useMemo, useRef } from 'react';
+import Cell from './Cell';
+import type { GridTableProps } from '../types';
 
-function GridTable({ data, columns: initialColumns, totals, label }) {
-  // Hover state
-  const [hoveredRow, setHoveredRow] = useState(null)
-  const [hoveredCol, setHoveredCol] = useState(null)
+interface SortConfig {
+  field: string;
+  direction: 'asc' | 'desc';
+}
 
-  // Sort state: { field: string, direction: 'asc' | 'desc' } or null
-  const [sortConfig, setSortConfig] = useState(null)
+type HoveredRowType = number | 'totals' | null;
 
-  // Filter state
-  const [filters, setFilters] = useState({})
-  const [showFilters, setShowFilters] = useState(false)
+function GridTable({ data, columns: initialColumns, totals, label }: GridTableProps): JSX.Element {
+  const [hoveredRow, setHoveredRow] = useState<HoveredRowType>(null);
+  const [hoveredCol, setHoveredCol] = useState<number | null>(null);
+  const [sortConfig, setSortConfig] = useState<SortConfig | null>(null);
+  const [filters, setFilters] = useState<Record<string, string>>({});
+  const [showFilters, setShowFilters] = useState<boolean>(false);
+  const [columnWidths, setColumnWidths] = useState<Record<string, number>>(() => {
+    const widths: Record<string, number> = {};
+    initialColumns.forEach((col) => {
+      widths[col.field] = col.width ?? 100;
+    });
+    return widths;
+  });
+  const [copyFeedback, setCopyFeedback] = useState<string | null>(null);
 
-  // Column widths for resizing
-  const [columnWidths, setColumnWidths] = useState(() => {
-    const widths = {}
-    initialColumns.forEach(col => {
-      widths[col.field] = col.width || 100
-    })
-    return widths
-  })
+  const resizing = useRef<{ field: string; startX: number; startWidth: number } | null>(null);
 
-  // Copy feedback
-  const [copyFeedback, setCopyFeedback] = useState(null)
-
-  // Resize tracking
-  const resizing = useRef(null)
-
-  // Guard
   if (!data || !Array.isArray(data)) {
     return (
       <div style={{ padding: '16px', color: '#9ca3af' }}>
         No data available
       </div>
-    )
+    );
   }
 
-  // Filter data
   const filteredData = useMemo(() => {
-    if (Object.keys(filters).length === 0) return data
+    if (Object.keys(filters).length === 0) return data;
 
-    return data.filter(row => {
+    return data.filter((row) => {
       return Object.entries(filters).every(([field, filterValue]) => {
-        if (!filterValue || filterValue.trim() === '') return true
+        if (!filterValue || filterValue.trim() === '') return true;
 
-        const cellValue = row[field]
-        const col = initialColumns.find(c => c.field === field)
+        const cellValue = row[field];
+        const col = initialColumns.find((c) => c.field === field);
 
-        // Numeric filtering with operators
         if (col?.format === 'integer' || col?.format === 'decimal_2' || col?.format === 'decimal_4') {
-          const numValue = Number(cellValue)
-          const filterStr = filterValue.trim()
+          const numValue = Number(cellValue);
+          const filterStr = filterValue.trim();
 
-          if (filterStr.startsWith('>=')) return numValue >= Number(filterStr.slice(2))
-          if (filterStr.startsWith('<=')) return numValue <= Number(filterStr.slice(2))
-          if (filterStr.startsWith('>')) return numValue > Number(filterStr.slice(1))
-          if (filterStr.startsWith('<')) return numValue < Number(filterStr.slice(1))
-          if (filterStr.startsWith('=')) return numValue === Number(filterStr.slice(1))
-          return String(cellValue).includes(filterStr)
+          if (filterStr.startsWith('>=')) return numValue >= Number(filterStr.slice(2));
+          if (filterStr.startsWith('<=')) return numValue <= Number(filterStr.slice(2));
+          if (filterStr.startsWith('>')) return numValue > Number(filterStr.slice(1));
+          if (filterStr.startsWith('<')) return numValue < Number(filterStr.slice(1));
+          if (filterStr.startsWith('=')) return numValue === Number(filterStr.slice(1));
+          return String(cellValue).includes(filterStr);
         }
 
-        // Text: case-insensitive contains
-        return String(cellValue).toLowerCase().includes(filterValue.toLowerCase())
-      })
-    })
-  }, [data, filters, initialColumns])
+        return String(cellValue).toLowerCase().includes(filterValue.toLowerCase());
+      });
+    });
+  }, [data, filters, initialColumns]);
 
-  // Sort data
   const sortedData = useMemo(() => {
-    if (!sortConfig) return filteredData
+    if (!sortConfig) return filteredData;
 
-    const { field, direction } = sortConfig
-    const col = initialColumns.find(c => c.field === field)
-    const isNumeric = col?.format === 'integer' || col?.format === 'decimal_2' || col?.format === 'decimal_4'
+    const { field, direction } = sortConfig;
+    const col = initialColumns.find((c) => c.field === field);
+    const isNumeric = col?.format === 'integer' || col?.format === 'decimal_2' || col?.format === 'decimal_4';
 
     return [...filteredData].sort((a, b) => {
-      const aVal = a[field]
-      const bVal = b[field]
+      const aVal = a[field];
+      const bVal = b[field];
 
-      // Handle nulls
-      if (aVal == null && bVal == null) return 0
-      if (aVal == null) return direction === 'asc' ? 1 : -1
-      if (bVal == null) return direction === 'asc' ? -1 : 1
+      if (aVal == null && bVal == null) return 0;
+      if (aVal == null) return direction === 'asc' ? 1 : -1;
+      if (bVal == null) return direction === 'asc' ? -1 : 1;
 
-      // Compare
-      let comparison = 0
+      let comparison = 0;
       if (isNumeric) {
-        comparison = Number(aVal) - Number(bVal)
+        comparison = Number(aVal) - Number(bVal);
       } else {
-        comparison = String(aVal).localeCompare(String(bVal))
+        comparison = String(aVal).localeCompare(String(bVal));
       }
 
-      return direction === 'asc' ? comparison : -comparison
-    })
-  }, [filteredData, sortConfig, initialColumns])
+      return direction === 'asc' ? comparison : -comparison;
+    });
+  }, [filteredData, sortConfig, initialColumns]);
 
-  // Handle sort
-  const handleSort = (field) => {
-    setSortConfig(current => {
+  const handleSort = (field: string): void => {
+    setSortConfig((current) => {
       if (current?.field !== field) {
-        return { field, direction: 'asc' }
+        return { field, direction: 'asc' };
       }
       if (current.direction === 'asc') {
-        return { field, direction: 'desc' }
+        return { field, direction: 'desc' };
       }
-      return null // Third click clears sort
-    })
-  }
+      return null;
+    });
+  };
 
-  // Get sort indicator
-  const getSortIndicator = (field) => {
-    if (sortConfig?.field !== field) return ' ↕'
-    return sortConfig.direction === 'asc' ? ' ↑' : ' ↓'
-  }
+  const getSortIndicator = (field: string): string => {
+    if (sortConfig?.field !== field) return ' ↕';
+    return sortConfig.direction === 'asc' ? ' ↑' : ' ↓';
+  };
 
-  // Copy to clipboard
-  const copyToClipboard = () => {
-    const headers = initialColumns.map(c => c.label).join('\t')
-    const rows = sortedData.map(row =>
-      initialColumns.map(c => row[c.field] ?? '').join('\t')
-    ).join('\n')
+  const copyToClipboard = (): void => {
+    const headers = initialColumns.map((c) => c.label).join('\t');
+    const rows = sortedData
+      .map((row) => initialColumns.map((c) => row[c.field] ?? '').join('\t'))
+      .join('\n');
 
-    let text = headers + '\n' + rows
+    let text = headers + '\n' + rows;
     if (totals) {
-      const totalsRow = initialColumns.map((c, i) =>
-        i === 0 ? 'Total' : (totals[c.field] ?? '')
-      ).join('\t')
-      text += '\n' + totalsRow
+      const totalsRow = initialColumns
+        .map((c, i) => (i === 0 ? 'Total' : (totals[c.field] ?? '')))
+        .join('\t');
+      text += '\n' + totalsRow;
     }
 
-    navigator.clipboard.writeText(text)
-    setCopyFeedback('Copied!')
-    setTimeout(() => setCopyFeedback(null), 1500)
-  }
+    void navigator.clipboard.writeText(text);
+    setCopyFeedback('Copied!');
+    setTimeout(() => setCopyFeedback(null), 1500);
+  };
 
-  // Filter handlers
-  const handleFilterChange = (field, value) => {
-    setFilters(prev => ({ ...prev, [field]: value }))
-  }
+  const handleFilterChange = (field: string, value: string): void => {
+    setFilters((prev) => ({ ...prev, [field]: value }));
+  };
 
-  const clearFilters = () => {
-    setFilters({})
-    setSortConfig(null)
-  }
+  const clearFilters = (): void => {
+    setFilters({});
+    setSortConfig(null);
+  };
 
-  // Resize handlers
-  const startResize = (e, field) => {
-    e.preventDefault()
-    e.stopPropagation()
-    resizing.current = { field, startX: e.clientX, startWidth: columnWidths[field] }
-    document.addEventListener('mousemove', handleResize)
-    document.addEventListener('mouseup', stopResize)
-  }
+  const startResize = (e: React.MouseEvent, field: string): void => {
+    e.preventDefault();
+    e.stopPropagation();
+    const startWidth = columnWidths[field] ?? 100;
+    resizing.current = { field, startX: e.clientX, startWidth };
+    document.addEventListener('mousemove', handleResize);
+    document.addEventListener('mouseup', stopResize);
+  };
 
-  const handleResize = (e) => {
-    if (!resizing.current) return
-    const diff = e.clientX - resizing.current.startX
-    const newWidth = Math.max(50, resizing.current.startWidth + diff)
-    setColumnWidths(prev => ({ ...prev, [resizing.current.field]: newWidth }))
-  }
+  const handleResize = (e: MouseEvent): void => {
+    if (!resizing.current) return;
+    const diff = e.clientX - resizing.current.startX;
+    const newWidth = Math.max(50, resizing.current.startWidth + diff);
+    const field = resizing.current.field;
+    setColumnWidths((prev) => ({ ...prev, [field]: newWidth }));
+  };
 
-  const stopResize = () => {
-    resizing.current = null
-    document.removeEventListener('mousemove', handleResize)
-    document.removeEventListener('mouseup', stopResize)
-  }
+  const stopResize = (): void => {
+    resizing.current = null;
+    document.removeEventListener('mousemove', handleResize);
+    document.removeEventListener('mouseup', stopResize);
+  };
 
-  // Background helper
-  const getCellBackground = (rowIndex, colIndex, isHeader = false, isTotals = false) => {
-    const isRowHovered = hoveredRow === rowIndex
-    const isColHovered = hoveredCol === colIndex
+  const getCellBackground = (
+    rowIndex: HoveredRowType,
+    colIndex: number,
+    isHeader: boolean = false,
+    isTotals: boolean = false
+  ): string => {
+    const isRowHovered = hoveredRow === rowIndex;
+    const isColHovered = hoveredCol === colIndex;
 
-    if (isRowHovered && isColHovered && !isHeader) return '#dbeafe'
-    if (isRowHovered && !isHeader) return '#f0f9ff'
-    if (isColHovered) return isHeader ? '#e5e7eb' : '#f0f9ff'
-    if (isTotals) return '#eeeeee'
-    if (isHeader) return '#f5f5f5'
-    return rowIndex % 2 === 0 ? '#ffffff' : '#fafafa'
-  }
+    if (isRowHovered && isColHovered && !isHeader) return '#dbeafe';
+    if (isRowHovered && !isHeader) return '#f0f9ff';
+    if (isColHovered) return isHeader ? '#e5e7eb' : '#f0f9ff';
+    if (isTotals) return '#eeeeee';
+    if (isHeader) return '#f5f5f5';
+    return typeof rowIndex === 'number' && rowIndex % 2 === 0 ? '#ffffff' : '#fafafa';
+  };
 
-  const hasActiveFilters = Object.values(filters).some(v => v && v.trim() !== '')
+  const hasActiveFilters = Object.values(filters).some((v) => v && v.trim() !== '');
 
   return (
     <div style={{ marginBottom: '24px' }}>
-      {/* Header bar */}
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: '8px',
-      }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '8px',
+        }}
+      >
         {label && (
           <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#374151', margin: 0 }}>
             {label}
@@ -257,12 +243,11 @@ function GridTable({ data, columns: initialColumns, totals, label }) {
               cursor: 'pointer',
             }}
           >
-            {copyFeedback || '📋 Copy'}
+            {copyFeedback ?? '📋 Copy'}
           </button>
         </div>
       </div>
 
-      {/* Table */}
       <div style={{ overflowX: 'auto' }}>
         <table
           style={{
@@ -273,12 +258,11 @@ function GridTable({ data, columns: initialColumns, totals, label }) {
             borderRadius: '4px',
           }}
           onMouseLeave={() => {
-            setHoveredRow(null)
-            setHoveredCol(null)
+            setHoveredRow(null);
+            setHoveredCol(null);
           }}
         >
           <thead>
-            {/* Header */}
             <tr>
               {initialColumns.map((col, colIndex) => (
                 <th
@@ -293,8 +277,8 @@ function GridTable({ data, columns: initialColumns, totals, label }) {
                     fontSize: '12px',
                     whiteSpace: 'nowrap',
                     borderBottom: '1px solid #e5e7eb',
-                    width: `${columnWidths[col.field]}px`,
-                    minWidth: `${columnWidths[col.field]}px`,
+                    width: `${columnWidths[col.field] ?? 100}px`,
+                    minWidth: `${columnWidths[col.field] ?? 100}px`,
                     position: 'relative',
                     cursor: 'pointer',
                     transition: 'background-color 0.1s',
@@ -303,13 +287,14 @@ function GridTable({ data, columns: initialColumns, totals, label }) {
                   onMouseEnter={() => setHoveredCol(colIndex)}
                 >
                   {col.label}
-                  <span style={{
-                    opacity: sortConfig?.field === col.field ? 1 : 0.3,
-                    fontSize: '10px',
-                  }}>
+                  <span
+                    style={{
+                      opacity: sortConfig?.field === col.field ? 1 : 0.3,
+                      fontSize: '10px',
+                    }}
+                  >
                     {getSortIndicator(col.field)}
                   </span>
-                  {/* Resize handle */}
                   <div
                     style={{
                       position: 'absolute',
@@ -326,7 +311,6 @@ function GridTable({ data, columns: initialColumns, totals, label }) {
               ))}
             </tr>
 
-            {/* Filter row */}
             {showFilters && (
               <tr>
                 {initialColumns.map((col) => (
@@ -341,7 +325,7 @@ function GridTable({ data, columns: initialColumns, totals, label }) {
                     <input
                       type="text"
                       placeholder={col.format === 'integer' ? '>0, <100...' : 'Filter...'}
-                      value={filters[col.field] || ''}
+                      value={filters[col.field] ?? ''}
                       onChange={(e) => handleFilterChange(col.field, e.target.value)}
                       style={{
                         width: '100%',
@@ -418,7 +402,7 @@ function GridTable({ data, columns: initialColumns, totals, label }) {
         </table>
       </div>
     </div>
-  )
+  );
 }
 
-export default GridTable
+export default GridTable;

@@ -23,7 +23,7 @@ const BOOK_GROUPS: Record<string, string[]> = {
   All: AVAILABLE_BOOKS,
 };
 
-const TIME_OF_DAY_OPTIONS: TimeOfDay[] = ['Open', 'Close', 'Live'];
+const TIME_OF_DAY_OPTIONS: TimeOfDay[] = ['Live', 'Close', 'Open'];
 
 interface DropdownPosition {
   top: number;

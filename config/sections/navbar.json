@@ -18,14 +18,14 @@
       "sections": [
         {
           "id": "futures-positions",
-          "label": "Futures Pos",
+          "label": "Futures Section",
           "layout": [
             { "component": "tables/futures-position", "row": 1, "col": 1 }
           ]
         },
         {
           "id": "bond-positions",
-          "label": "Bonds Pos",
+          "label": "Bonds Section",
           "layout": [
             { "component": "tables/bonds-position", "row": 1, "col": 1 }
           ]

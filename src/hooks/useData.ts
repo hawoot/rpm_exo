@@ -1,38 +1,63 @@
 /**
  * useData Hook - Manages data fetching
  *
- * Currently using mock data. To switch to live API,
- * comment out the mock section and uncomment the API section below.
+ * To switch to live API: comment out MOCK section, uncomment API section
  */
 
 import { useState, useCallback } from 'react';
 import type { ApiResponse, RequestParams, DataSource, UseDataReturn } from '../types';
-import mockApiData from '../../mocks/sampleResponse.json';
 import { apiConfig } from '../config/registry';
+import mockApiData from '../../mocks/sampleResponse.json'; // MOCK: comment out for live API
 
-const mockData = mockApiData as ApiResponse;
+// ╔════════════════════════════════════════════════════════════════════════════╗
+// ║                              SHARED UTILS                                  ║
+// ╚════════════════════════════════════════════════════════════════════════════╝
 
-const DEFAULT_PARAMS: RequestParams = {
-  env_date: mockData.base_params?.env_date ?? '20251222',
-  pos_date: mockData.base_params?.pos_date ?? '20251221',
-  books: mockData.base_params?.books ?? ['OfficialCUPSBook', 'EXOTICS'],
-  time_of_day: (mockData.base_params?.time_of_day ?? 'Close') as RequestParams['time_of_day'],
+const formatDate = (date: Date): string => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}${month}${day}`;
 };
+
+const getPreviousWorkingDay = (date: Date): Date => {
+  const result = new Date(date);
+  result.setDate(result.getDate() - 1);
+  while (result.getDay() === 0 || result.getDay() === 6) {
+    result.setDate(result.getDate() - 1);
+  }
+  return result;
+};
+
+const today = new Date();
+const DEFAULT_PARAMS: RequestParams = {
+  env_date: formatDate(today),
+  pos_date: formatDate(getPreviousWorkingDay(today)),
+  books: ['OfficialCUPSBook', 'RATES_EUR', 'RATES_USD', 'RATES_GBP'],
+  time_of_day: 'Live',
+};
+
+// ╔════════════════════════════════════════════════════════════════════════════╗
+// ║                              MAIN HOOK                                     ║
+// ╚════════════════════════════════════════════════════════════════════════════╝
 
 export function useData(): UseDataReturn {
   const [params, setParams] = useState<RequestParams>(DEFAULT_PARAMS);
   const [selectedEnv, setSelectedEnv] = useState<string>(apiConfig.default_environment);
   const [customUrl, setCustomUrl] = useState<string>('');
-  const [data, setData] = useState<ApiResponse>(mockData);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   const effectiveBaseUrl: string =
     customUrl || (apiConfig.environments[selectedEnv]?.base_url ?? '');
 
-  // ============================================================
-  // MOCK DATA
-  // ============================================================
+  // ════════════════════════════════════════════════════════════════════════════
+  // MOCK - comment out this section to use live API
+  // ════════════════════════════════════════════════════════════════════════════
+
+  const mockData = mockApiData as ApiResponse;
+
+  const [data, setData] = useState<ApiResponse>(mockData);
 
   const dataSource: DataSource = {
     type: 'mock',
@@ -49,11 +74,13 @@ export function useData(): UseDataReturn {
     setData(mockData);
     setIsLoading(false);
     return mockData;
-  }, []);
+  }, [mockData]);
 
-  // ============================================================
-  // API (uncomment below, comment out mock section above)
-  // ============================================================
+  // ════════════════════════════════════════════════════════════════════════════
+  // API - uncomment this section to use live API
+  // ════════════════════════════════════════════════════════════════════════════
+
+  // const [data, setData] = useState<ApiResponse | null>(null);
 
   // const dataSource: DataSource = {
   //   type: 'api',
@@ -98,6 +125,8 @@ export function useData(): UseDataReturn {
   //     setIsLoading(false);
   //   }
   // }, [effectiveBaseUrl, params]);
+
+  // ════════════════════════════════════════════════════════════════════════════
 
   return {
     data,

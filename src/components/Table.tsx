@@ -109,6 +109,7 @@ function Table({ data, columns, totals, label }: TableProps): JSX.Element {
           domLayout="autoHeight"
           autoSizeStrategy={{ type: 'fitCellContents' }}
           columnHoverHighlight={true}
+          suppressColumnVirtualisation={true}
         />
       </div>
     </div>

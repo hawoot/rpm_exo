@@ -1,0 +1,10 @@
+{
+  "id": "futures-positions",
+  "label": "Futures Pos",
+  "nav_group": "positions",
+  "order": 10,
+
+  "layout": [
+    { "component": "tables/futures-position", "row": 1, "col": 1 }
+  ]
+}

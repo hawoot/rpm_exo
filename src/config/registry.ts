@@ -24,8 +24,8 @@ import navbar from '../../config/sections/_navbar.json';
 
 // Sections
 import summary from '../../config/sections/summary.json';
-import futures from '../../config/sections/futures.json';
-import bonds from '../../config/sections/bonds.json';
+import futuresPositions from '../../config/sections/futures-positions.json';
+import bondPositions from '../../config/sections/bond-positions.json';
 
 // Components - Cards
 import futuresPnl from '../../config/components/cards/futures-pnl.json';
@@ -46,8 +46,8 @@ export const navbarConfig = navbar as SectionsIndex;
 
 export const sectionConfigs: Record<string, SectionConfig> = {
   summary: summary as SectionConfig,
-  futures: futures as SectionConfig,
-  bonds: bonds as SectionConfig,
+  'futures-positions': futuresPositions as SectionConfig,
+  'bond-positions': bondPositions as SectionConfig,
 };
 
 export const componentConfigs: Record<string, ComponentConfig> = {

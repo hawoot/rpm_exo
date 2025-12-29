@@ -57,7 +57,8 @@ function SectionButton({ section, isActive, onClick, indent = false }: SectionBu
 }
 
 function Sidebar({ currentSection, onSectionChange, sectionConfigs }: SidebarProps): JSX.Element {
-  const { nav_groups, sections } = navbarConfig;
+  const { nav_groups } = navbarConfig;
+  const sections = Object.values(sectionConfigs);
 
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
@@ -75,10 +76,9 @@ function Sidebar({ currentSection, onSectionChange, sectionConfigs }: SidebarPro
       grouped[group.id] = [];
     });
 
-    sections.forEach((sectionId) => {
-      const config = sectionConfigs[sectionId];
-      const navGroup = config?.nav_group;
-      if (config && navGroup && grouped[navGroup]) {
+    sections.forEach((config) => {
+      const navGroup = config.nav_group;
+      if (navGroup && grouped[navGroup]) {
         grouped[navGroup].push(config);
       }
     });
@@ -99,10 +99,7 @@ function Sidebar({ currentSection, onSectionChange, sectionConfigs }: SidebarPro
     const query = searchQuery.toLowerCase();
     const results: SectionWithMatches[] = [];
 
-    sections.forEach((sectionId) => {
-      const config = sectionConfigs[sectionId];
-      if (!config) return;
-
+    sections.forEach((config) => {
       const sectionMatches = config.label.toLowerCase().includes(query);
 
       let gridMatches = false;

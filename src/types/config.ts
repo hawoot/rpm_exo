@@ -146,7 +146,6 @@ export interface SectionConfig {
 /** Sections index configuration */
 export interface SectionsIndex {
   nav_groups: NavGroup[];
-  sections: string[];
 }
 
 /** Environment configuration */

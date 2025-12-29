@@ -1,0 +1,10 @@
+{
+  "id": "bond-positions",
+  "label": "Bonds Pos",
+  "nav_group": "positions",
+  "order": 20,
+
+  "layout": [
+    { "component": "tables/bonds-position", "row": 1, "col": 1 }
+  ]
+}

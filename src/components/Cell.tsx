@@ -3,7 +3,7 @@
  */
 
 import { formatValue } from '../lib/formatters';
-import { getBackgroundColor, getTextColor } from '../lib/colors';
+import { getBackgroundColor, getTextColor, text, getBorderColor, ui } from '../lib/colors';
 import type { CellProps } from '../types';
 
 /**
@@ -42,7 +42,7 @@ function Cell({
   const formattedValue = formatValue(value, format);
 
   const color = isHeader
-    ? '#374151'
+    ? text('default')
     : getTextColor(value, textColor, textColorValue);
 
   const textAlign = align ?? (format === 'text' ? 'left' : 'right');
@@ -74,7 +74,7 @@ function Cell({
     fontWeight: isHeader ? 600 : 400,
     fontSize: isHeader ? '12px' : '13px',
     whiteSpace: 'nowrap',
-    borderBottom: '1px solid #e5e7eb',
+    borderBottom: `1px solid ${getBorderColor('default')}`,
     transition: 'background-color 0.1s ease',
     cursor: 'default',
   };
@@ -85,7 +85,7 @@ function Cell({
   }
 
   if (isHovered) {
-    style.boxShadow = 'inset 0 0 0 2px #3b82f6';
+    style.boxShadow = `inset 0 0 0 2px ${ui('focus-ring')}`;
   }
 
   return (

@@ -30,10 +30,25 @@ export type BackgroundToken =
   | 'total'
   | 'row-even'
   | 'row-odd'
-  | 'row-hover';
+  | 'row-hover'
+  | 'col-hover'
+  | 'cell-hover'
+  | 'header-hover'
+  | 'filter-row';
 
 /** Text color tokens */
-export type TextColorToken = 'negative' | 'positive' | 'muted';
+export type TextColorToken = 'default' | 'negative' | 'positive' | 'muted' | 'active';
+
+/** UI color tokens */
+export type UiColorToken =
+  | 'button-bg'
+  | 'button-bg-active'
+  | 'button-text'
+  | 'button-text-active'
+  | 'success-bg'
+  | 'success-text'
+  | 'danger-text'
+  | 'focus-ring';
 
 /** Border color tokens */
 export type BorderToken = 'default' | 'strong';
@@ -44,6 +59,7 @@ export interface ThemeConfig {
     backgrounds: Record<string, string>;
     text: Record<string, string>;
     border: Record<string, string>;
+    ui: Record<string, string>;
   };
 }
 

@@ -5,6 +5,7 @@
 import { useState, useMemo, useRef } from 'react';
 import Cell from './Cell';
 import { formatsConfig } from '../config/registry';
+import { bg, text, ui, getBorderColor, getCellHoverBackground } from '../lib/colors';
 import type { GridTableProps } from '../types';
 
 const formats = formatsConfig;
@@ -39,7 +40,7 @@ function GridTable({ data, columns: initialColumns, totals, label }: GridTablePr
 
   if (!data || !Array.isArray(data)) {
     return (
-      <div style={{ padding: '16px', color: '#9ca3af' }}>
+      <div style={{ padding: '16px', color: text('muted') }}>
         No data available
       </div>
     );
@@ -172,15 +173,7 @@ function GridTable({ data, columns: initialColumns, totals, label }: GridTablePr
     isHeader: boolean = false,
     isTotals: boolean = false
   ): string => {
-    const isRowHovered = hoveredRow === rowIndex;
-    const isColHovered = hoveredCol === colIndex;
-
-    if (isRowHovered && isColHovered && !isHeader) return '#dbeafe';
-    if (isRowHovered && !isHeader) return '#f0f9ff';
-    if (isColHovered) return isHeader ? '#e5e7eb' : '#f0f9ff';
-    if (isTotals) return '#eeeeee';
-    if (isHeader) return '#f5f5f5';
-    return typeof rowIndex === 'number' && rowIndex % 2 === 0 ? '#ffffff' : '#fafafa';
+    return getCellHoverBackground(rowIndex, colIndex, hoveredRow, hoveredCol, isHeader, isTotals);
   };
 
   const hasActiveFilters = Object.values(filters).some((v) => v && v.trim() !== '');
@@ -196,10 +189,10 @@ function GridTable({ data, columns: initialColumns, totals, label }: GridTablePr
         }}
       >
         {label && (
-          <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#374151', margin: 0 }}>
+          <h3 style={{ fontSize: '14px', fontWeight: 600, color: text('default'), margin: 0 }}>
             {label}
             {(hasActiveFilters || sortConfig) && (
-              <span style={{ marginLeft: '8px', fontSize: '11px', color: '#6b7280' }}>
+              <span style={{ marginLeft: '8px', fontSize: '11px', color: text('muted') }}>
                 ({sortedData.length} of {data.length})
               </span>
             )}
@@ -212,10 +205,10 @@ function GridTable({ data, columns: initialColumns, totals, label }: GridTablePr
             style={{
               padding: '4px 8px',
               fontSize: '12px',
-              border: '1px solid #d1d5db',
+              border: `1px solid ${getBorderColor('strong')}`,
               borderRadius: '4px',
-              backgroundColor: showFilters || hasActiveFilters ? '#eff6ff' : '#ffffff',
-              color: hasActiveFilters ? '#1d4ed8' : '#6b7280',
+              backgroundColor: showFilters || hasActiveFilters ? ui('button-bg-active') : ui('button-bg'),
+              color: hasActiveFilters ? text('active') : ui('button-text'),
               cursor: 'pointer',
             }}
           >
@@ -230,7 +223,7 @@ function GridTable({ data, columns: initialColumns, totals, label }: GridTablePr
                 fontSize: '12px',
                 border: 'none',
                 backgroundColor: 'transparent',
-                color: '#dc2626',
+                color: ui('danger-text'),
                 cursor: 'pointer',
               }}
             >
@@ -243,10 +236,10 @@ function GridTable({ data, columns: initialColumns, totals, label }: GridTablePr
             style={{
               padding: '4px 8px',
               fontSize: '12px',
-              border: '1px solid #d1d5db',
+              border: `1px solid ${getBorderColor('strong')}`,
               borderRadius: '4px',
-              backgroundColor: copyFeedback ? '#dcfce7' : '#ffffff',
-              color: copyFeedback ? '#166534' : '#6b7280',
+              backgroundColor: copyFeedback ? ui('success-bg') : ui('button-bg'),
+              color: copyFeedback ? ui('success-text') : ui('button-text'),
               cursor: 'pointer',
             }}
           >
@@ -260,8 +253,8 @@ function GridTable({ data, columns: initialColumns, totals, label }: GridTablePr
           style={{
             width: '100%',
             borderCollapse: 'collapse',
-            backgroundColor: '#ffffff',
-            border: '1px solid #e5e7eb',
+            backgroundColor: bg('row-even'),
+            border: `1px solid ${getBorderColor('default')}`,
             borderRadius: '4px',
           }}
           onMouseLeave={() => {
@@ -279,11 +272,11 @@ function GridTable({ data, columns: initialColumns, totals, label }: GridTablePr
                     padding: '8px 12px',
                     textAlign: col.format === 'text' ? 'left' : 'right',
                     backgroundColor: getCellBackground(-1, colIndex, true),
-                    color: sortConfig?.field === col.field ? '#1d4ed8' : '#374151',
+                    color: sortConfig?.field === col.field ? text('active') : text('default'),
                     fontWeight: 600,
                     fontSize: '12px',
                     whiteSpace: 'nowrap',
-                    borderBottom: '1px solid #e5e7eb',
+                    borderBottom: `1px solid ${getBorderColor('default')}`,
                     width: `${columnWidths[col.field] ?? 100}px`,
                     minWidth: `${columnWidths[col.field] ?? 100}px`,
                     position: 'relative',
@@ -325,8 +318,8 @@ function GridTable({ data, columns: initialColumns, totals, label }: GridTablePr
                     key={`filter-${col.field}`}
                     style={{
                       padding: '4px',
-                      backgroundColor: '#f9fafb',
-                      borderBottom: '1px solid #e5e7eb',
+                      backgroundColor: bg('filter-row'),
+                      borderBottom: `1px solid ${getBorderColor('default')}`,
                     }}
                   >
                     <input
@@ -338,7 +331,7 @@ function GridTable({ data, columns: initialColumns, totals, label }: GridTablePr
                         width: '100%',
                         padding: '4px 6px',
                         fontSize: '11px',
-                        border: '1px solid #d1d5db',
+                        border: `1px solid ${getBorderColor('strong')}`,
                         borderRadius: '3px',
                         boxSizing: 'border-box',
                       }}
@@ -377,7 +370,7 @@ function GridTable({ data, columns: initialColumns, totals, label }: GridTablePr
               <tr>
                 <td
                   colSpan={initialColumns.length}
-                  style={{ padding: '24px', textAlign: 'center', color: '#9ca3af' }}
+                  style={{ padding: '24px', textAlign: 'center', color: text('muted') }}
                 >
                   No matching records
                 </td>

@@ -8,16 +8,32 @@
       "total": "#eeeeee",
       "row-even": "#ffffff",
       "row-odd": "#fafafa",
-      "row-hover": "#f0f0f0"
+      "row-hover": "#f5f5f5",
+      "col-hover": "#f0f0f0",
+      "cell-hover": "#e8e8e8",
+      "header-hover": "#ebebeb",
+      "filter-row": "#f9fafb"
     },
     "text": {
+      "default": "#374151",
       "negative": "#dc2626",
       "positive": "#1f2937",
-      "muted": "#9ca3af"
+      "muted": "#9ca3af",
+      "active": "#111827"
     },
     "border": {
       "default": "#e5e7eb",
       "strong": "#d1d5db"
+    },
+    "ui": {
+      "button-bg": "#ffffff",
+      "button-bg-active": "#f3f4f6",
+      "button-text": "#6b7280",
+      "button-text-active": "#374151",
+      "success-bg": "#dcfce7",
+      "success-text": "#166534",
+      "danger-text": "#dc2626",
+      "focus-ring": "#6b7280"
     }
   }
 }

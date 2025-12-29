@@ -27,6 +27,7 @@ export type {
   BackgroundToken,
   TextColorToken,
   BorderToken,
+  UiColorToken,
   ThemeConfig,
   TextColorMode,
   ColumnDefinition,

@@ -4,10 +4,10 @@
 
 import { useState, useMemo, useRef } from 'react';
 import Cell from './Cell';
-import formatsConfig from '../../config/formats.json';
-import type { GridTableProps, FormatConfig } from '../types';
+import { formatsConfig } from '../config/registry';
+import type { GridTableProps } from '../types';
 
-const formats = formatsConfig as Record<string, FormatConfig>;
+const formats = formatsConfig;
 
 const isNumericFormat = (format: string): boolean => {
   return formats[format]?.is_numeric ?? false;

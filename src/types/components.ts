@@ -86,7 +86,6 @@ export interface UseDataReturn {
   params: RequestParams;
   setParams: Dispatch<SetStateAction<RequestParams>>;
   dataSource: DataSource;
-  useMockData: boolean;
   apiConfig: ApiConfig;
   selectedEnv: string;
   setSelectedEnv: Dispatch<SetStateAction<string>>;

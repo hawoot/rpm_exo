@@ -2,10 +2,10 @@
  * Color utilities - resolve color tokens from theme.json
  */
 
-import themeConfig from '../../config/theme.json';
-import type { ThemeConfig, TextColorMode, TextColorToken, BorderToken } from '../types';
+import { themeConfig } from '../config/registry';
+import type { TextColorMode, TextColorToken, BorderToken } from '../types';
 
-const theme = themeConfig as ThemeConfig;
+const theme = themeConfig;
 
 /**
  * Get a background color from the theme

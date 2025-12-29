@@ -3,22 +3,8 @@
  */
 
 import { useState, useMemo } from 'react';
-import sectionsIndex from '../../../config/sections/_index.json';
-import type { SidebarProps, SectionConfig, SectionsIndex, GridConfig } from '../../types';
-
-import futuresPositionGrid from '../../../config/grids/futures-position.json';
-import futuresPnlCard from '../../../config/grids/futures-pnl-card.json';
-import futuresDv01Card from '../../../config/grids/futures-dv01-card.json';
-import bondsPositionGrid from '../../../config/grids/bonds-position.json';
-
-const typedSectionsIndex = sectionsIndex as SectionsIndex;
-
-const gridConfigs: Record<string, GridConfig> = {
-  'futures-position': futuresPositionGrid as GridConfig,
-  'futures-pnl-card': futuresPnlCard as GridConfig,
-  'futures-dv01-card': futuresDv01Card as GridConfig,
-  'bonds-position': bondsPositionGrid as GridConfig,
-};
+import { navbarConfig, componentConfigs } from '../../config/registry';
+import type { SidebarProps, SectionConfig } from '../../types';
 
 interface SectionWithMatches extends SectionConfig {
   matchingGrids: string[] | null;
@@ -71,7 +57,7 @@ function SectionButton({ section, isActive, onClick, indent = false }: SectionBu
 }
 
 function Sidebar({ currentSection, onSectionChange, sectionConfigs }: SidebarProps): JSX.Element {
-  const { nav_groups, sections } = typedSectionsIndex;
+  const { nav_groups, sections } = navbarConfig;
 
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
@@ -123,14 +109,12 @@ function Sidebar({ currentSection, onSectionChange, sectionConfigs }: SidebarPro
       const matchingGrids: string[] = [];
 
       if (config.layout) {
-        config.layout.forEach((row) => {
-          row.grids?.forEach((gridId) => {
-            const gridConfig = gridConfigs[gridId];
-            if (gridConfig?.label?.toLowerCase().includes(query)) {
-              gridMatches = true;
-              matchingGrids.push(gridConfig.label);
-            }
-          });
+        config.layout.forEach((item) => {
+          const componentConfig = componentConfigs[item.component];
+          if (componentConfig?.label?.toLowerCase().includes(query)) {
+            gridMatches = true;
+            matchingGrids.push(componentConfig.label);
+          }
         });
       }
 
@@ -188,7 +172,7 @@ function Sidebar({ currentSection, onSectionChange, sectionConfigs }: SidebarPro
       <div style={{ padding: '12px 12px 8px' }}>
         <input
           type="text"
-          placeholder="Search sections & grids..."
+          placeholder="Search sections & components..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           style={{

@@ -4,34 +4,14 @@
 
 import { useState, useRef } from 'react';
 
-import summarySection from '../config/sections/summary.json';
-import futuresSection from '../config/sections/futures.json';
-import bondsSection from '../config/sections/bonds.json';
-import futuresPositionGrid from '../config/grids/futures-position.json';
-import futuresPnlCard from '../config/grids/futures-pnl-card.json';
-import futuresDv01Card from '../config/grids/futures-dv01-card.json';
-import bondsPositionGrid from '../config/grids/bonds-position.json';
-
 import Sidebar from './components/layout/Sidebar';
 import ParamsForm from './components/forms/ParamsForm';
 import DataDisplay from './components/DataDisplay';
 import Metadata from './components/Metadata';
 
 import { useData } from './hooks/useData';
-import type { SectionConfig, GridConfig } from './types';
-
-const sectionConfigs: Record<string, SectionConfig> = {
-  summary: summarySection as SectionConfig,
-  futures: futuresSection as SectionConfig,
-  bonds: bondsSection as SectionConfig,
-};
-
-const gridConfigs: Record<string, GridConfig> = {
-  'futures-position': futuresPositionGrid as GridConfig,
-  'futures-pnl-card': futuresPnlCard as GridConfig,
-  'futures-dv01-card': futuresDv01Card as GridConfig,
-  'bonds-position': bondsPositionGrid as GridConfig,
-};
+import { sectionConfigs, componentConfigs } from './config/registry';
+import type { LayoutItem } from './types';
 
 function App(): JSX.Element {
   const [currentSection, setCurrentSection] = useState<string>('futures');
@@ -227,44 +207,61 @@ function App(): JSX.Element {
 
           {!isLoading &&
             apiData &&
-            section?.layout?.map((row, rowIndex) => (
-              <div
-                key={rowIndex}
-                style={{
-                  display: 'flex',
-                  gap: '16px',
-                  marginBottom: '16px',
-                }}
-              >
-                {row.grids.map((gridId) => {
-                  const gridConfig = gridConfigs[gridId];
+            section &&
+            (() => {
+              // Group layout items by row
+              const rowGroups: Record<number, LayoutItem[]> = {};
+              section.layout?.forEach((item) => {
+                const rowItems = rowGroups[item.row] ?? (rowGroups[item.row] = []);
+                rowItems.push(item);
+              });
 
-                  if (!gridConfig) {
-                    return (
-                      <div
-                        key={gridId}
-                        style={{
-                          flex: 1,
-                          padding: '16px',
-                          backgroundColor: '#fef2f2',
-                          border: '1px solid #fecaca',
-                          borderRadius: '6px',
-                          color: '#dc2626',
-                        }}
-                      >
-                        Grid config not found: {gridId}
-                      </div>
-                    );
-                  }
-
+              // Sort rows and render
+              return Object.keys(rowGroups)
+                .map(Number)
+                .sort((a, b) => a - b)
+                .map((rowNum) => {
+                  const items = rowGroups[rowNum]?.sort((a, b) => a.col - b.col) ?? [];
                   return (
-                    <div key={gridId} style={{ flex: 1 }}>
-                      <DataDisplay gridConfig={gridConfig} apiData={apiData} />
+                    <div
+                      key={rowNum}
+                      style={{
+                        display: 'flex',
+                        gap: '16px',
+                        marginBottom: '16px',
+                      }}
+                    >
+                      {items.map((item) => {
+                        const componentConfig = componentConfigs[item.component];
+
+                        if (!componentConfig) {
+                          return (
+                            <div
+                              key={item.component}
+                              style={{
+                                flex: 1,
+                                padding: '16px',
+                                backgroundColor: '#fef2f2',
+                                border: '1px solid #fecaca',
+                                borderRadius: '6px',
+                                color: '#dc2626',
+                              }}
+                            >
+                              Component config not found: {item.component}
+                            </div>
+                          );
+                        }
+
+                        return (
+                          <div key={item.component} style={{ flex: 1 }}>
+                            <DataDisplay gridConfig={componentConfig} apiData={apiData} />
+                          </div>
+                        );
+                      })}
                     </div>
                   );
-                })}
-              </div>
-            ))}
+                });
+            })()}
 
           <Metadata apiData={apiData} currentSection={currentSection} />
         </main>

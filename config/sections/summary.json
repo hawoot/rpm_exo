@@ -5,9 +5,7 @@
   "order": 1,
 
   "layout": [
-    {
-      "row": 1,
-      "grids": ["futures-pnl-card", "futures-dv01-card"]
-    }
+    { "component": "cards/futures-pnl", "row": 1, "col": 1 },
+    { "component": "cards/futures-dv01", "row": 1, "col": 2 }
   ]
 }

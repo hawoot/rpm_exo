@@ -1,23 +1,15 @@
 /**
- * useData Hook - Manages data fetching with clear source indication
+ * useData Hook - Manages data fetching
  *
- * To switch from mock to live API:
- * 1. Set USE_MOCK_DATA to false below
- * 2. Ensure your backend is running at the configured URL
+ * Currently using mock data. To switch to live API,
+ * comment out the mock section and uncomment the API section below.
  */
 
 import { useState, useCallback } from 'react';
-import type { ApiResponse, RequestParams, DataSource, ApiConfig, UseDataReturn } from '../types';
-import mockApiData from '../mocks/sampleResponse.json';
-import apiConfigJson from '../../config/api.json';
+import type { ApiResponse, RequestParams, DataSource, UseDataReturn } from '../types';
+import mockApiData from '../../mocks/sampleResponse.json';
+import { apiConfig } from '../config/registry';
 
-// ============================================================
-// DATA SOURCE CONFIGURATION
-// ============================================================
-const USE_MOCK_DATA = true;
-// ============================================================
-
-const apiConfig = apiConfigJson as ApiConfig;
 const mockData = mockApiData as ApiResponse;
 
 const DEFAULT_PARAMS: RequestParams = {
@@ -38,10 +30,14 @@ export function useData(): UseDataReturn {
   const effectiveBaseUrl: string =
     customUrl || (apiConfig.environments[selectedEnv]?.base_url ?? '');
 
+  // ============================================================
+  // MOCK DATA
+  // ============================================================
+
   const dataSource: DataSource = {
-    type: USE_MOCK_DATA ? 'mock' : 'api',
-    file: USE_MOCK_DATA ? 'src/mocks/sampleResponse.json' : null,
-    url: USE_MOCK_DATA ? null : effectiveBaseUrl,
+    type: 'mock',
+    file: 'mocks/sampleResponse.json',
+    url: null,
     environment: selectedEnv,
     environmentLabel: apiConfig.environments[selectedEnv]?.label,
   };
@@ -49,45 +45,59 @@ export function useData(): UseDataReturn {
   const refresh = useCallback(async (): Promise<ApiResponse> => {
     setIsLoading(true);
     setError(null);
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    setData(mockData);
+    setIsLoading(false);
+    return mockData;
+  }, []);
 
-    if (USE_MOCK_DATA) {
-      await new Promise((resolve) => setTimeout(resolve, 300));
-      setData(mockData);
-      setIsLoading(false);
-      return mockData;
-    }
+  // ============================================================
+  // API (uncomment below, comment out mock section above)
+  // ============================================================
 
-    try {
-      const url = new URL(apiConfig.endpoints.pos_env, effectiveBaseUrl);
+  // const dataSource: DataSource = {
+  //   type: 'api',
+  //   file: null,
+  //   url: effectiveBaseUrl,
+  //   environment: selectedEnv,
+  //   environmentLabel: apiConfig.environments[selectedEnv]?.label,
+  // };
 
-      Object.entries(params).forEach(([key, value]) => {
-        if (Array.isArray(value)) {
-          url.searchParams.set(key, value.join(','));
-        } else if (value !== undefined && value !== null) {
-          url.searchParams.set(key, String(value));
-        }
-      });
+  // const refresh = useCallback(async (): Promise<ApiResponse> => {
+  //   setIsLoading(true);
+  //   setError(null);
 
-      const response = await fetch(url.toString(), {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-      });
+  //   try {
+  //     const url = new URL(apiConfig.endpoints.pos_env, effectiveBaseUrl);
 
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status} ${response.statusText}`);
-      }
+  //     Object.entries(params).forEach(([key, value]) => {
+  //       if (Array.isArray(value)) {
+  //         url.searchParams.set(key, value.join(','));
+  //       } else if (value !== undefined && value !== null) {
+  //         url.searchParams.set(key, String(value));
+  //       }
+  //     });
 
-      const result = (await response.json()) as ApiResponse;
-      setData(result);
-      return result;
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Unknown error';
-      setError(message);
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [effectiveBaseUrl, params]);
+  //     const response = await fetch(url.toString(), {
+  //       method: 'GET',
+  //       headers: { 'Content-Type': 'application/json' },
+  //     });
+
+  //     if (!response.ok) {
+  //       throw new Error(`API error: ${response.status} ${response.statusText}`);
+  //     }
+
+  //     const result = (await response.json()) as ApiResponse;
+  //     setData(result);
+  //     return result;
+  //   } catch (err) {
+  //     const message = err instanceof Error ? err.message : 'Unknown error';
+  //     setError(message);
+  //     throw err;
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // }, [effectiveBaseUrl, params]);
 
   return {
     data,
@@ -96,7 +106,6 @@ export function useData(): UseDataReturn {
     params,
     setParams,
     dataSource,
-    useMockData: USE_MOCK_DATA,
     apiConfig,
     selectedEnv,
     setSelectedEnv,

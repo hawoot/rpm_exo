@@ -112,10 +112,11 @@ export interface NavGroup {
   order: number;
 }
 
-/** Layout row definition */
-export interface LayoutRow {
+/** Layout item definition (matrix format) */
+export interface LayoutItem {
+  component: string;  // e.g., "cards/futures-pnl"
   row: number;
-  grids: string[];
+  col: number;
 }
 
 /** Section configuration */
@@ -124,7 +125,7 @@ export interface SectionConfig {
   label: string;
   nav_group: string;
   order: number;
-  layout: LayoutRow[];
+  layout: LayoutItem[];
 }
 
 /** Sections index configuration */

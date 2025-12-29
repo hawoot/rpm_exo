@@ -5,9 +5,6 @@
   "order": 10,
 
   "layout": [
-    {
-      "row": 1,
-      "grids": ["bonds-position"]
-    }
+    { "component": "tables/bonds-position", "row": 1, "col": 1 }
   ]
 }

@@ -2,10 +2,9 @@
  * Format a value according to format rules from formats.json
  */
 
-import formatsConfig from '../../config/formats.json';
-import type { FormatConfig } from '../types';
+import { formatsConfig } from '../config/registry';
 
-const formats = formatsConfig as Record<string, FormatConfig>;
+const formats = formatsConfig;
 
 /**
  * Format a value using a format type from formats.json

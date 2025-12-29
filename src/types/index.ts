@@ -37,7 +37,7 @@ export type {
   KvGridConfig,
   GridConfig,
   NavGroup,
-  LayoutRow,
+  LayoutItem,
   SectionConfig,
   SectionsIndex,
   EnvironmentConfig,

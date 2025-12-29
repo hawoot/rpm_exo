@@ -134,17 +134,8 @@ function Sidebar({ currentSection, onSectionChange }: SidebarProps): JSX.Element
             margin: 0,
           }}
         >
-          RPM
+          RPM Exotics
         </h1>
-        <p
-          style={{
-            fontSize: '11px',
-            color: '#9ca3af',
-            margin: '4px 0 0',
-          }}
-        >
-          Risk Position Management
-        </p>
       </div>
 
       <div style={{ padding: '12px 12px 8px' }}>

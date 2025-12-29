@@ -39,14 +39,9 @@ export interface GridCardProps {
 export interface CellProps {
   value: unknown;
   format?: FormatType;
-  background?: string | null;
-  columnBackground?: string | null;
   textColor?: TextColorMode;
   textColorValue?: TextColorToken;
-  align?: 'left' | 'center' | 'right';
-  width?: number;
   isHeader?: boolean;
-  onMouseEnter?: () => void;
 }
 
 export interface DataDisplayProps {

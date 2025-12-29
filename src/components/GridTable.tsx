@@ -5,7 +5,7 @@
 import { useState, useMemo, useRef } from 'react';
 import Cell from './Cell';
 import { formatsConfig } from '../config/registry';
-import { bg, text, ui, getBorderColor } from '../lib/colors';
+import { bg, text, ui, getBorderColor, getBackgroundColor } from '../lib/colors';
 import type { GridTableProps } from '../types';
 
 const formats = formatsConfig;
@@ -363,7 +363,7 @@ function GridTable({ data, columns: initialColumns, totals, label }: GridTablePr
                       style={{
                         padding: '8px 12px',
                         textAlign: col.format === 'text' ? 'left' : 'right',
-                        backgroundColor: col.background ? undefined : (rowIndex % 2 === 0 ? bg('row-even') : bg('row-odd')),
+                        backgroundColor: getBackgroundColor(col.background) ?? (rowIndex % 2 === 0 ? bg('row-even') : bg('row-odd')),
                         borderBottom: `1px solid ${getBorderColor('default')}`,
                         width: `${columnWidths[col.field] ?? 100}px`,
                         minWidth: `${columnWidths[col.field] ?? 100}px`,
@@ -376,7 +376,6 @@ function GridTable({ data, columns: initialColumns, totals, label }: GridTablePr
                         format={col.format}
                         textColor={col.text_color}
                         textColorValue={col.text_color_value}
-                        columnBackground={col.background}
                       />
                     </td>
                   ))}
@@ -410,7 +409,7 @@ function GridTable({ data, columns: initialColumns, totals, label }: GridTablePr
                     style={{
                       padding: '8px 12px',
                       textAlign: col.format === 'text' ? 'left' : 'right',
-                      backgroundColor: col.background ? undefined : bg('total'),
+                      backgroundColor: getBackgroundColor(col.background) ?? bg('total'),
                       borderBottom: `1px solid ${getBorderColor('default')}`,
                       width: `${columnWidths[col.field] ?? 100}px`,
                       minWidth: `${columnWidths[col.field] ?? 100}px`,
@@ -423,7 +422,6 @@ function GridTable({ data, columns: initialColumns, totals, label }: GridTablePr
                       format={colIndex === 0 ? 'text' : col.format}
                       textColor={col.text_color}
                       textColorValue={col.text_color_value}
-                      columnBackground={col.background}
                     />
                   </td>
                 ))}

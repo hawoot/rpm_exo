@@ -16,17 +16,17 @@ import type { TableProps } from '../types';
 // Register AG Grid modules (required for v31+)
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-// Subtle grey theme
-const greyTheme = themeQuartz.withParams({
-  backgroundColor: '#f8f9fa',
-  headerBackgroundColor: '#f1f3f4',
-  rowHoverColor: '#e8eaed',
-  columnHoverColor: '#e8eaed',
-});
-
-function Table({ data, columns, totals, label }: TableProps): JSX.Element {
+function Table({ data, columns, totals, label, fontSize = 12 }: TableProps): JSX.Element {
   const [copied, setCopied] = useState(false);
   const columnDefs = useMemo(() => convertColumnsToColDefs(columns), [columns]);
+
+  const theme = useMemo(() => themeQuartz.withParams({
+    backgroundColor: '#f8f9fa',
+    headerBackgroundColor: '#f1f3f4',
+    rowHoverColor: '#e8eaed',
+    columnHoverColor: '#e8eaed',
+    fontSize,
+  }), [fontSize]);
 
   const pinnedBottomRowData = useMemo(() => {
     if (!totals) return undefined;
@@ -97,7 +97,7 @@ function Table({ data, columns, totals, label }: TableProps): JSX.Element {
 
       <div style={{ width: '100%' }}>
         <AgGridReact
-          theme={greyTheme}
+          theme={theme}
           rowData={data}
           columnDefs={columnDefs}
           defaultColDef={defaultColDef}

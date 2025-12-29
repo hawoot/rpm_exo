@@ -24,6 +24,7 @@ function DataDisplay({ componentConfig, apiData }: DataDisplayProps): JSX.Elemen
           columns={tableConfig.columns}
           totals={totals}
           label={tableConfig.label}
+          fontSize={tableConfig.font_size}
         />
       );
     }

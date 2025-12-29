@@ -40,14 +40,12 @@ export interface CellProps {
   value: unknown;
   format?: FormatType;
   background?: string | null;
-  customBackground?: string | null;
   columnBackground?: string | null;
   textColor?: TextColorMode;
   textColorValue?: TextColorToken;
   align?: 'left' | 'center' | 'right';
   width?: number;
   isHeader?: boolean;
-  isHovered?: boolean;
   onMouseEnter?: () => void;
 }
 

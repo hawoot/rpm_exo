@@ -5,10 +5,11 @@
 import { useState, useMemo, useRef } from 'react';
 import Cell from './Cell';
 import { formatsConfig } from '../config/registry';
-import { bg, text, ui, getBorderColor, getCellHoverBackground } from '../lib/colors';
+import { bg, text, ui, getBorderColor } from '../lib/colors';
 import type { GridTableProps } from '../types';
 
 const formats = formatsConfig;
+const HOVER_BORDER = '1px solid #e57373';
 
 const isNumericFormat = (format: string): boolean => {
   return formats[format]?.is_numeric ?? false;
@@ -122,15 +123,15 @@ function GridTable({ data, columns: initialColumns, totals, label }: GridTablePr
       .map((row) => initialColumns.map((c) => row[c.field] ?? '').join('\t'))
       .join('\n');
 
-    let text = headers + '\n' + rows;
+    let clipText = headers + '\n' + rows;
     if (totals) {
       const totalsRow = initialColumns
         .map((c, i) => (i === 0 ? 'Total' : (totals[c.field] ?? '')))
         .join('\t');
-      text += '\n' + totalsRow;
+      clipText += '\n' + totalsRow;
     }
 
-    void navigator.clipboard.writeText(text);
+    void navigator.clipboard.writeText(clipText);
     setCopyFeedback('Copied!');
     setTimeout(() => setCopyFeedback(null), 1500);
   };
@@ -167,16 +168,18 @@ function GridTable({ data, columns: initialColumns, totals, label }: GridTablePr
     document.removeEventListener('mouseup', stopResize);
   };
 
-  const getCellBackground = (
-    rowIndex: HoveredRowType,
-    colIndex: number,
-    isHeader: boolean = false,
-    isTotals: boolean = false
-  ): string => {
-    return getCellHoverBackground(rowIndex, colIndex, hoveredRow, hoveredCol, isHeader, isTotals);
-  };
-
   const hasActiveFilters = Object.values(filters).some((v) => v && v.trim() !== '');
+
+  // Column border styles based on position
+  const getColBorderStyle = (colIndex: number, isFirst: boolean, isLast: boolean): React.CSSProperties => {
+    if (hoveredCol !== colIndex) return {};
+    return {
+      borderLeft: HOVER_BORDER,
+      borderRight: HOVER_BORDER,
+      borderTop: isFirst ? HOVER_BORDER : undefined,
+      borderBottom: isLast ? HOVER_BORDER : undefined,
+    };
+  };
 
   return (
     <div style={{ marginBottom: '24px' }}>
@@ -271,7 +274,7 @@ function GridTable({ data, columns: initialColumns, totals, label }: GridTablePr
                   style={{
                     padding: '8px 12px',
                     textAlign: col.format === 'text' ? 'left' : 'right',
-                    backgroundColor: getCellBackground(-1, colIndex, true),
+                    backgroundColor: bg('header'),
                     color: sortConfig?.field === col.field ? text('active') : text('default'),
                     fontWeight: 600,
                     fontSize: '12px',
@@ -281,8 +284,8 @@ function GridTable({ data, columns: initialColumns, totals, label }: GridTablePr
                     minWidth: `${columnWidths[col.field] ?? 100}px`,
                     position: 'relative',
                     cursor: 'pointer',
-                    transition: 'background-color 0.1s',
                     userSelect: 'none',
+                    ...getColBorderStyle(colIndex, true, false),
                   }}
                   onMouseEnter={() => setHoveredCol(colIndex)}
                 >
@@ -343,28 +346,43 @@ function GridTable({ data, columns: initialColumns, totals, label }: GridTablePr
           </thead>
 
           <tbody>
-            {sortedData.map((row, rowIndex) => (
-              <tr
-                key={rowIndex}
-                onMouseEnter={() => setHoveredRow(rowIndex)}
-                style={{ cursor: 'default' }}
-              >
-                {initialColumns.map((col, colIndex) => (
-                  <Cell
-                    key={col.field}
-                    value={row[col.field]}
-                    format={col.format}
-                    customBackground={getCellBackground(rowIndex, colIndex)}
-                    textColor={col.text_color}
-                    textColorValue={col.text_color_value}
-                    width={columnWidths[col.field]}
-                    columnBackground={col.background}
-                    isHovered={hoveredRow === rowIndex && hoveredCol === colIndex}
-                    onMouseEnter={() => setHoveredCol(colIndex)}
-                  />
-                ))}
-              </tr>
-            ))}
+            {sortedData.map((row, rowIndex) => {
+              const isLastRow = !totals && rowIndex === sortedData.length - 1;
+              return (
+                <tr
+                  key={rowIndex}
+                  onMouseEnter={() => setHoveredRow(rowIndex)}
+                  style={{
+                    outline: hoveredRow === rowIndex ? HOVER_BORDER : 'none',
+                    outlineOffset: '-1px',
+                  }}
+                >
+                  {initialColumns.map((col, colIndex) => (
+                    <td
+                      key={col.field}
+                      style={{
+                        padding: '8px 12px',
+                        textAlign: col.format === 'text' ? 'left' : 'right',
+                        backgroundColor: col.background ? undefined : (rowIndex % 2 === 0 ? bg('row-even') : bg('row-odd')),
+                        borderBottom: `1px solid ${getBorderColor('default')}`,
+                        width: `${columnWidths[col.field] ?? 100}px`,
+                        minWidth: `${columnWidths[col.field] ?? 100}px`,
+                        ...getColBorderStyle(colIndex, false, isLastRow),
+                      }}
+                      onMouseEnter={() => setHoveredCol(colIndex)}
+                    >
+                      <Cell
+                        value={row[col.field]}
+                        format={col.format}
+                        textColor={col.text_color}
+                        textColorValue={col.text_color_value}
+                        columnBackground={col.background}
+                      />
+                    </td>
+                  ))}
+                </tr>
+              );
+            })}
 
             {sortedData.length === 0 && (
               <tr>
@@ -380,21 +398,34 @@ function GridTable({ data, columns: initialColumns, totals, label }: GridTablePr
             {totals && sortedData.length > 0 && (
               <tr
                 onMouseEnter={() => setHoveredRow('totals')}
-                style={{ fontWeight: 600 }}
+                style={{
+                  fontWeight: 600,
+                  outline: hoveredRow === 'totals' ? HOVER_BORDER : 'none',
+                  outlineOffset: '-1px',
+                }}
               >
                 {initialColumns.map((col, colIndex) => (
-                  <Cell
+                  <td
                     key={col.field}
-                    value={colIndex === 0 ? 'Total' : totals[col.field]}
-                    format={colIndex === 0 ? 'text' : col.format}
-                    customBackground={getCellBackground('totals', colIndex, false, true)}
-                    textColor={col.text_color}
-                    textColorValue={col.text_color_value}
-                    width={columnWidths[col.field]}
-                    columnBackground={col.background}
-                    isHovered={hoveredRow === 'totals' && hoveredCol === colIndex}
+                    style={{
+                      padding: '8px 12px',
+                      textAlign: col.format === 'text' ? 'left' : 'right',
+                      backgroundColor: col.background ? undefined : bg('total'),
+                      borderBottom: `1px solid ${getBorderColor('default')}`,
+                      width: `${columnWidths[col.field] ?? 100}px`,
+                      minWidth: `${columnWidths[col.field] ?? 100}px`,
+                      ...getColBorderStyle(colIndex, false, true),
+                    }}
                     onMouseEnter={() => setHoveredCol(colIndex)}
-                  />
+                  >
+                    <Cell
+                      value={colIndex === 0 ? 'Total' : totals[col.field]}
+                      format={colIndex === 0 ? 'text' : col.format}
+                      textColor={col.text_color}
+                      textColorValue={col.text_color_value}
+                      columnBackground={col.background}
+                    />
+                  </td>
                 ))}
               </tr>
             )}

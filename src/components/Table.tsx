@@ -2,19 +2,30 @@
  * Table Component - AG Grid wrapper
  */
 
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useState } from 'react';
 import { AgGridReact } from 'ag-grid-react';
-import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
+import {
+  AllCommunityModule,
+  ModuleRegistry,
+  themeQuartz,
+} from 'ag-grid-community';
 import type { ColDef } from 'ag-grid-community';
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-alpine.css';
 import { convertColumnsToColDefs } from '../lib/agGridUtils';
 import type { TableProps } from '../types';
 
 // Register AG Grid modules (required for v31+)
 ModuleRegistry.registerModules([AllCommunityModule]);
 
+// Subtle grey theme
+const greyTheme = themeQuartz.withParams({
+  backgroundColor: '#f8f9fa',
+  headerBackgroundColor: '#f1f3f4',
+  rowHoverColor: '#e8eaed',
+  columnHoverColor: '#e8eaed',
+});
+
 function Table({ data, columns, totals, label }: TableProps): JSX.Element {
+  const [copied, setCopied] = useState(false);
   const columnDefs = useMemo(() => convertColumnsToColDefs(columns), [columns]);
 
   const pinnedBottomRowData = useMemo(() => {
@@ -46,6 +57,8 @@ function Table({ data, columns, totals, label }: TableProps): JSX.Element {
     }
 
     void navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
   }, [data, columns, totals]);
 
   if (!data?.length) {
@@ -67,27 +80,31 @@ function Table({ data, columns, totals, label }: TableProps): JSX.Element {
         <button
           onClick={copyToClipboard}
           style={{
-            padding: '4px 8px',
+            padding: '4px 12px',
             fontSize: '12px',
-            border: '1px solid #d1d5db',
+            border: 'none',
             borderRadius: '4px',
-            backgroundColor: '#ffffff',
-            color: '#6b7280',
+            backgroundColor: copied ? '#10b981' : '#374151',
+            color: '#ffffff',
             cursor: 'pointer',
+            transition: 'all 0.2s ease',
+            minWidth: '60px',
           }}
         >
-          Copy
+          {copied ? 'Copied!' : 'Copy'}
         </button>
       </div>
 
-      <div className="ag-theme-alpine" style={{ width: '100%' }}>
+      <div style={{ width: '100%' }}>
         <AgGridReact
+          theme={greyTheme}
           rowData={data}
           columnDefs={columnDefs}
           defaultColDef={defaultColDef}
           pinnedBottomRowData={pinnedBottomRowData}
           domLayout="autoHeight"
           autoSizeStrategy={{ type: 'fitCellContents' }}
+          columnHoverHighlight={true}
         />
       </div>
     </div>

@@ -1,5 +1,5 @@
 /**
- * Configuration Types - Grid, Section, Theme, and API configs
+ * Configuration Types - Component, Section, Theme, and API configs
  */
 
 /** Available format types from formats.json */
@@ -66,37 +66,36 @@ export interface ThemeConfig {
 /** Text color mode for values */
 export type TextColorMode = 'fixed' | 'sign-based';
 
-/** Column definition for grid tables */
+/** Column definition for tables */
 export interface ColumnDefinition {
   field: string;
   label: string;
   format: FormatType;
   width?: number;
-  frozen?: boolean;
   background: string | null;
   text_color: TextColorMode;
   text_color_value?: TextColorToken;
 }
 
-/** Display types for grids */
+/** Display types for components */
 export type DisplayType = 'table' | 'card' | 'row' | 'kv';
 
-/** Base grid configuration */
-interface BaseGridConfig {
+/** Base component configuration */
+interface BaseComponentConfig {
   id: string;
   label: string;
   data_path: string;
 }
 
-/** Table grid configuration */
-export interface TableGridConfig extends BaseGridConfig {
+/** Table configuration */
+export interface TableConfig extends BaseComponentConfig {
   display_type: 'table';
   totals_path?: string;
   columns: ColumnDefinition[];
 }
 
-/** Card grid configuration */
-export interface CardGridConfig extends BaseGridConfig {
+/** Card configuration */
+export interface CardConfig extends BaseComponentConfig {
   display_type: 'card';
   format: FormatType;
   background?: string | null;
@@ -104,22 +103,22 @@ export interface CardGridConfig extends BaseGridConfig {
   text_color_value?: TextColorToken;
 }
 
-/** Row grid configuration (future) */
-export interface RowGridConfig extends BaseGridConfig {
+/** Row configuration (future) */
+export interface RowConfig extends BaseComponentConfig {
   display_type: 'row';
 }
 
-/** Key-value grid configuration (future) */
-export interface KvGridConfig extends BaseGridConfig {
+/** Key-value configuration (future) */
+export interface KvConfig extends BaseComponentConfig {
   display_type: 'kv';
 }
 
-/** Union of all grid config types */
-export type GridConfig =
-  | TableGridConfig
-  | CardGridConfig
-  | RowGridConfig
-  | KvGridConfig;
+/** Union of all component config types */
+export type ComponentConfig =
+  | TableConfig
+  | CardConfig
+  | RowConfig
+  | KvConfig;
 
 /** Navigation group */
 export interface NavGroup {

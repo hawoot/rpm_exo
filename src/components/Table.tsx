@@ -1,12 +1,12 @@
 /**
- * GridTable Component - Feature-rich data table
+ * Table Component - Feature-rich data table
  */
 
 import { useState, useMemo, useRef } from 'react';
 import Cell from './Cell';
 import { formatsConfig } from '../config/registry';
 import { bg, text, ui, getBorderColor, getBackgroundColor } from '../lib/colors';
-import type { GridTableProps } from '../types';
+import type { TableProps } from '../types';
 
 const formats = formatsConfig;
 const HOVER_BORDER = '1px solid #e57373';
@@ -22,7 +22,7 @@ interface SortConfig {
 
 type HoveredRowType = number | 'totals' | null;
 
-function GridTable({ data, columns: initialColumns, totals, label }: GridTableProps): JSX.Element {
+function Table({ data, columns: initialColumns, totals, label }: TableProps): JSX.Element {
   const [hoveredRow, setHoveredRow] = useState<HoveredRowType>(null);
   const [hoveredCol, setHoveredCol] = useState<number | null>(null);
   const [sortConfig, setSortConfig] = useState<SortConfig | null>(null);
@@ -434,4 +434,4 @@ function GridTable({ data, columns: initialColumns, totals, label }: GridTablePr
   );
 }
 
-export default GridTable;
+export default Table;

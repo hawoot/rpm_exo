@@ -13,7 +13,6 @@
       "label": "Instrument",
       "format": "text",
       "width": 120,
-      "frozen": true,
       "background": null,
       "text_color": "fixed",
       "text_color_value": "positive"

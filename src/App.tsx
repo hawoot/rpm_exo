@@ -254,7 +254,7 @@ function App(): JSX.Element {
 
                         return (
                           <div key={item.component} style={{ flex: 1 }}>
-                            <DataDisplay gridConfig={componentConfig} apiData={apiData} />
+                            <DataDisplay componentConfig={componentConfig} apiData={apiData} />
                           </div>
                         );
                       })}

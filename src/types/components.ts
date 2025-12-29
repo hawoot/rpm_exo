@@ -5,7 +5,7 @@
 import type { Dispatch, SetStateAction } from 'react';
 import type { ApiResponse, RequestParams, DataSource } from './api';
 import type {
-  GridConfig,
+  ComponentConfig,
   SectionConfig,
   ApiConfig,
   FormatType,
@@ -20,14 +20,14 @@ export type TotalsRecord = Record<string, number | string | null>;
 /** Data row type */
 export type DataRow = Record<string, unknown>;
 
-export interface GridTableProps {
+export interface TableProps {
   data: DataRow[] | null | undefined;
   columns: ColumnDefinition[];
   totals?: TotalsRecord | null;
   label?: string;
 }
 
-export interface GridCardProps {
+export interface CardProps {
   value: number | null | undefined;
   label: string;
   format?: FormatType;
@@ -45,7 +45,7 @@ export interface CellProps {
 }
 
 export interface DataDisplayProps {
-  gridConfig: GridConfig;
+  componentConfig: ComponentConfig;
   apiData: ApiResponse;
 }
 

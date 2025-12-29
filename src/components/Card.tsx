@@ -1,20 +1,20 @@
 /**
- * GridCard Component - Displays a single prominent value with copy
+ * Card Component - Displays a single prominent value with copy
  */
 
 import { useState } from 'react';
 import { formatValue } from '../lib/formatters';
 import { getBackgroundColor, getTextColor } from '../lib/colors';
-import type { GridCardProps } from '../types';
+import type { CardProps } from '../types';
 
-function GridCard({
+function Card({
   value,
   label,
   format = 'integer',
   background = null,
   textColor = 'sign-based',
   textColorValue = 'positive',
-}: GridCardProps): JSX.Element {
+}: CardProps): JSX.Element {
   const [copyFeedback, setCopyFeedback] = useState<boolean>(false);
 
   const formattedValue = formatValue(value, format);
@@ -83,4 +83,4 @@ function GridCard({
   );
 }
 
-export default GridCard;
+export default Card;

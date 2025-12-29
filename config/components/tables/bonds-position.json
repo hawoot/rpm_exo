@@ -13,7 +13,6 @@
       "label": "ISIN",
       "format": "text",
       "width": 140,
-      "frozen": true,
       "background": null,
       "text_color": "fixed",
       "text_color_value": "positive"

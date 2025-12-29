@@ -1,25 +1,25 @@
 /**
- * DataDisplay Component - Generic data renderer based on grid config
+ * DataDisplay Component - Generic data renderer based on component config
  */
 
 import { getByPath } from '../lib/pathAccess';
-import GridTable from './GridTable';
-import GridCard from './GridCard';
-import type { DataDisplayProps, DataRow, TotalsRecord, TableGridConfig, CardGridConfig } from '../types';
+import Table from './Table';
+import Card from './Card';
+import type { DataDisplayProps, DataRow, TotalsRecord, TableConfig, CardConfig } from '../types';
 
-function DataDisplay({ gridConfig, apiData }: DataDisplayProps): JSX.Element {
+function DataDisplay({ componentConfig, apiData }: DataDisplayProps): JSX.Element {
   const apiDataRecord = apiData as unknown as Record<string, unknown>;
-  const data = getByPath<DataRow[] | number>(apiDataRecord, gridConfig.data_path);
+  const data = getByPath<DataRow[] | number>(apiDataRecord, componentConfig.data_path);
 
-  switch (gridConfig.display_type) {
+  switch (componentConfig.display_type) {
     case 'table': {
-      const tableConfig = gridConfig as TableGridConfig;
+      const tableConfig = componentConfig as TableConfig;
       const totals = tableConfig.totals_path
         ? getByPath<TotalsRecord>(apiDataRecord, tableConfig.totals_path)
         : null;
 
       return (
-        <GridTable
+        <Table
           data={data as DataRow[] | null | undefined}
           columns={tableConfig.columns}
           totals={totals}
@@ -29,9 +29,9 @@ function DataDisplay({ gridConfig, apiData }: DataDisplayProps): JSX.Element {
     }
 
     case 'card': {
-      const cardConfig = gridConfig as CardGridConfig;
+      const cardConfig = componentConfig as CardConfig;
       return (
-        <GridCard
+        <Card
           value={data as number | null | undefined}
           label={cardConfig.label}
           format={cardConfig.format}
@@ -46,14 +46,14 @@ function DataDisplay({ gridConfig, apiData }: DataDisplayProps): JSX.Element {
     case 'kv':
       return (
         <div style={{ padding: '16px', color: '#9ca3af' }}>
-          Display type &quot;{gridConfig.display_type}&quot; not yet implemented
+          Display type &quot;{componentConfig.display_type}&quot; not yet implemented
         </div>
       );
 
     default:
       return (
         <div style={{ padding: '16px', color: '#dc2626' }}>
-          Unknown display type: {(gridConfig as { display_type: string }).display_type}
+          Unknown display type: {(componentConfig as { display_type: string }).display_type}
         </div>
       );
   }

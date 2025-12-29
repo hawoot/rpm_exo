@@ -7,7 +7,7 @@
 
 import type {
   SectionConfig,
-  GridConfig,
+  ComponentConfig,
   SectionsIndex,
   FormatsConfig,
   ThemeConfig,
@@ -50,9 +50,9 @@ export const sectionConfigs: Record<string, SectionConfig> = {
   bonds: bonds as SectionConfig,
 };
 
-export const componentConfigs: Record<string, GridConfig> = {
-  'cards/futures-pnl': futuresPnl as GridConfig,
-  'cards/futures-dv01': futuresDv01 as GridConfig,
-  'tables/futures-position': futuresPosition as GridConfig,
-  'tables/bonds-position': bondsPosition as GridConfig,
+export const componentConfigs: Record<string, ComponentConfig> = {
+  'cards/futures-pnl': futuresPnl as ComponentConfig,
+  'cards/futures-dv01': futuresDv01 as ComponentConfig,
+  'tables/futures-position': futuresPosition as ComponentConfig,
+  'tables/bonds-position': bondsPosition as ComponentConfig,
 };

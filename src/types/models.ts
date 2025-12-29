@@ -34,7 +34,7 @@ export interface SectionMetadata {
 
 /** Generic section data structure */
 export interface SectionData<TData = Record<string, unknown>> {
-  data: TData;
+  data: TData | null;
   metadata: SectionMetadata;
   error_stack: string;
 }

@@ -29,6 +29,7 @@ import futuresDv01 from '../../config/components/cards/futures-dv01.json';
 // Components - Tables
 import futuresPosition from '../../config/components/tables/futures-position.json';
 import bondsPosition from '../../config/components/tables/bonds-position.json';
+import futuresError from '../../config/components/tables/futures-error.json';
 
 // --- Exports ---
 
@@ -59,4 +60,5 @@ export const componentConfigs: Record<string, ComponentConfig> = {
   'cards/futures-dv01': futuresDv01 as ComponentConfig,
   'tables/futures-position': futuresPosition as ComponentConfig,
   'tables/bonds-position': bondsPosition as ComponentConfig,
+  'tables/futures-error': futuresError as ComponentConfig,
 };

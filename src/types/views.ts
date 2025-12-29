@@ -171,10 +171,9 @@ export interface DataDisplayProps {
   apiData: ApiResponse;
 }
 
-/** Metadata component props */
-export interface MetadataProps {
+/** RequestInfo component props */
+export interface RequestInfoProps {
   apiData: ApiResponse | null;
-  currentSection: string;
 }
 
 /** Sidebar component props */
@@ -200,7 +199,7 @@ export interface ParamsFormProps {
 
 /** useData hook return type */
 export interface UseDataReturn {
-  data: ApiResponse;
+  data: ApiResponse | null;
   isLoading: boolean;
   error: string | null;
   params: RequestParams;
@@ -212,5 +211,6 @@ export interface UseDataReturn {
   customUrl: string;
   setCustomUrl: Dispatch<SetStateAction<string>>;
   effectiveBaseUrl: string;
+  requestUrl: string;
   refresh: () => Promise<ApiResponse>;
 }

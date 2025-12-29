@@ -1,0 +1,28 @@
+{
+  "id": "futures-error",
+  "label": "Futures Error Test",
+
+  "data_path": "response_data.futures_error.data.future_position",
+  "totals_path": null,
+
+  "display_type": "table",
+
+  "columns": [
+    {
+      "field": "Contract",
+      "label": "Contract",
+      "format": "text",
+      "background": null,
+      "text_color": "fixed",
+      "text_color_value": "default"
+    },
+    {
+      "field": "Instrument",
+      "label": "Instrument",
+      "format": "text",
+      "background": null,
+      "text_color": "fixed",
+      "text_color_value": "positive"
+    }
+  ]
+}

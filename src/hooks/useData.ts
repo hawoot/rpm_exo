@@ -51,13 +51,32 @@ export function useData(): UseDataReturn {
   const effectiveBaseUrl: string =
     customUrl || (apiConfig.environments[selectedEnv]?.base_url ?? '');
 
+  // Build the full request URL for display (useful for debugging)
+  const buildRequestUrl = useCallback((): string => {
+    try {
+      const url = new URL(apiConfig.endpoints.pos_env, effectiveBaseUrl);
+      Object.entries(params).forEach(([key, value]) => {
+        if (Array.isArray(value)) {
+          url.searchParams.set(key, value.join(','));
+        } else if (value !== undefined && value !== null) {
+          url.searchParams.set(key, String(value));
+        }
+      });
+      return url.toString();
+    } catch {
+      return `${effectiveBaseUrl}${apiConfig.endpoints.pos_env}?...`;
+    }
+  }, [effectiveBaseUrl, params]);
+
+  const requestUrl = buildRequestUrl();
+
   // ════════════════════════════════════════════════════════════════════════════
   // MOCK - comment out this section to use live API
   // ════════════════════════════════════════════════════════════════════════════
 
-  const mockData = mockApiData as ApiResponse;
+  const mockData = mockApiData as unknown as ApiResponse;
 
-  const [data, setData] = useState<ApiResponse>(mockData);
+  const [data, setData] = useState<ApiResponse | null>(mockData);
 
   const dataSource: DataSource = {
     type: 'mock',
@@ -76,9 +95,9 @@ export function useData(): UseDataReturn {
     return mockData;
   }, [mockData]);
 
-  // ════════════════════════════════════════════════════════════════════════════
-  // API - uncomment this section to use live API
-  // ════════════════════════════════════════════════════════════════════════════
+  // // ════════════════════════════════════════════════════════════════════════════
+  // // API - uncomment this section to use live API
+  // // ════════════════════════════════════════════════════════════════════════════
 
   // const [data, setData] = useState<ApiResponse | null>(null);
 
@@ -94,17 +113,17 @@ export function useData(): UseDataReturn {
   //   setIsLoading(true);
   //   setError(null);
 
+  //   // Build URL outside try block so it's accessible in catch
+  //   const url = new URL(apiConfig.endpoints.pos_env, effectiveBaseUrl);
+  //   Object.entries(params).forEach(([key, value]) => {
+  //     if (Array.isArray(value)) {
+  //       url.searchParams.set(key, value.join(','));
+  //     } else if (value !== undefined && value !== null) {
+  //       url.searchParams.set(key, String(value));
+  //     }
+  //   });
+
   //   try {
-  //     const url = new URL(apiConfig.endpoints.pos_env, effectiveBaseUrl);
-
-  //     Object.entries(params).forEach(([key, value]) => {
-  //       if (Array.isArray(value)) {
-  //         url.searchParams.set(key, value.join(','));
-  //       } else if (value !== undefined && value !== null) {
-  //         url.searchParams.set(key, String(value));
-  //       }
-  //     });
-
   //     const response = await fetch(url.toString(), {
   //       method: 'GET',
   //       headers: { 'Content-Type': 'application/json' },
@@ -118,8 +137,19 @@ export function useData(): UseDataReturn {
   //     setData(result);
   //     return result;
   //   } catch (err) {
-  //     const message = err instanceof Error ? err.message : 'Unknown error';
-  //     setError(message);
+  //     console.error('API fetch failed:', err);
+
+  //     // Build detailed error message with stack
+  //     let message: string;
+  //     if (err instanceof Error) {
+  //       message = err.stack || err.message;
+  //     } else {
+  //       message = String(err);
+  //     }
+
+  //     // Add request context
+  //     const context = `\n\n=== Request Context ===\nURL: ${url.toString()}\nParams: ${JSON.stringify(params, null, 2)}`;
+  //     setError(message + context);
   //     throw err;
   //   } finally {
   //     setIsLoading(false);
@@ -141,6 +171,7 @@ export function useData(): UseDataReturn {
     customUrl,
     setCustomUrl,
     effectiveBaseUrl,
+    requestUrl,
     refresh,
   };
 }

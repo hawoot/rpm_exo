@@ -33,6 +33,19 @@
           ]
         }
       ]
+    },
+    {
+      "label": "Debug",
+      "defaultExpanded": false,
+      "sections": [
+        {
+          "id": "error-test",
+          "label": "Error Test",
+          "layout": [
+            { "component": "tables/futures-error", "row": 1, "col": 1 }
+          ]
+        }
+      ]
     }
   ]
 }

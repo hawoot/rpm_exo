@@ -9,7 +9,15 @@
 
   "columns": [
     {
-      "field": "instrument",
+      "field": "Contract",
+      "label": "Contract",
+      "format": "text",
+      "background": null,
+      "text_color": "fixed",
+      "text_color_value": "default"
+    },
+    {
+      "field": "Instrument",
       "label": "Instrument",
       "format": "text",
       "background": null,
@@ -17,173 +25,7 @@
       "text_color_value": "positive"
     },
     {
-      "field": "exchange",
-      "label": "Exchange",
-      "format": "text",
-      "background": null,
-      "text_color": "fixed",
-      "text_color_value": "muted"
-    },
-    {
-      "field": "underlying",
-      "label": "Underlying",
-      "format": "text",
-      "background": null,
-      "text_color": "fixed",
-      "text_color_value": "muted"
-    },
-    {
-      "field": "currency",
-      "label": "Currency",
-      "format": "text",
-      "background": null,
-      "text_color": "fixed",
-      "text_color_value": "muted"
-    },
-    {
-      "field": "position",
-      "label": "Position",
-      "format": "integer",
-      "background": null,
-      "text_color": "sign-based"
-    },
-    {
-      "field": "price_open",
-      "label": "Open",
-      "format": "decimal",
-      "background": null,
-      "text_color": "fixed",
-      "text_color_value": "default"
-    },
-    {
-      "field": "price_close",
-      "label": "Close",
-      "format": "decimal",
-      "background": null,
-      "text_color": "fixed",
-      "text_color_value": "default"
-    },
-    {
-      "field": "price_live",
-      "label": "Live",
-      "format": "decimal",
-      "background": null,
-      "text_color": "fixed",
-      "text_color_value": "default"
-    },
-    {
-      "field": "price_chg",
-      "label": "Change",
-      "format": "decimal",
-      "background": null,
-      "text_color": "sign-based"
-    },
-    {
-      "field": "dv01",
-      "label": "DV01",
-      "format": "integer",
-      "background": "risk",
-      "text_color": "sign-based"
-    },
-    {
-      "field": "pnl",
-      "label": "P&L",
-      "format": "integer",
-      "background": "pnl",
-      "text_color": "sign-based"
-    },
-    {
-      "field": "swap_pnl",
-      "label": "Swap P&L",
-      "format": "integer",
-      "background": "pnl",
-      "text_color": "sign-based"
-    },
-    {
-      "field": "notional",
-      "label": "Notional",
-      "format": "integer",
-      "background": null,
-      "text_color": "sign-based"
-    },
-    {
-      "field": "margin",
-      "label": "Margin",
-      "format": "integer",
-      "background": null,
-      "text_color": "fixed",
-      "text_color_value": "default"
-    },
-    {
-      "field": "delta",
-      "label": "Delta",
-      "format": "decimal",
-      "background": "risk",
-      "text_color": "sign-based"
-    },
-    {
-      "field": "gamma",
-      "label": "Gamma",
-      "format": "decimal",
-      "background": null,
-      "text_color": "sign-based"
-    },
-    {
-      "field": "vega",
-      "label": "Vega",
-      "format": "decimal",
-      "background": null,
-      "text_color": "sign-based"
-    },
-    {
-      "field": "theta",
-      "label": "Theta",
-      "format": "decimal",
-      "background": null,
-      "text_color": "sign-based"
-    },
-    {
-      "field": "volume",
-      "label": "Volume",
-      "format": "integer",
-      "background": null,
-      "text_color": "fixed",
-      "text_color_value": "default"
-    },
-    {
-      "field": "bid",
-      "label": "Bid",
-      "format": "decimal",
-      "background": null,
-      "text_color": "fixed",
-      "text_color_value": "default"
-    },
-    {
-      "field": "ask",
-      "label": "Ask",
-      "format": "decimal",
-      "background": null,
-      "text_color": "fixed",
-      "text_color_value": "default"
-    },
-    {
-      "field": "mid",
-      "label": "Mid",
-      "format": "decimal",
-      "background": null,
-      "text_color": "fixed",
-      "text_color_value": "default"
-    },
-    {
-      "field": "spread",
-      "label": "Spread",
-      "format": "decimal",
-      "background": null,
-      "text_color": "fixed",
-      "text_color_value": "muted"
-    },
-    {
-      "field": "expiry",
+      "field": "ExpiryDate",
       "label": "Expiry",
       "format": "text",
       "background": null,
@@ -191,40 +33,85 @@
       "text_color_value": "muted"
     },
     {
-      "field": "days_to_expiry",
-      "label": "DTE",
-      "format": "integer",
+      "field": "Underlying",
+      "label": "Underlying",
+      "format": "text",
       "background": null,
       "text_color": "fixed",
-      "text_color_value": "default"
+      "text_color_value": "muted"
     },
     {
-      "field": "open_interest",
-      "label": "Open Int",
-      "format": "integer",
+      "field": "CCY",
+      "label": "CCY",
+      "format": "text",
       "background": null,
       "text_color": "fixed",
-      "text_color_value": "default"
+      "text_color_value": "muted"
     },
     {
-      "field": "avg_price",
-      "label": "Avg Price",
+      "field": "Family",
+      "label": "Family",
+      "format": "text",
+      "background": null,
+      "text_color": "fixed",
+      "text_color_value": "muted"
+    },
+    {
+      "field": "NoOfContracts",
+      "label": "Contracts",
+      "format": "integer",
+      "background": null,
+      "text_color": "sign-based"
+    },
+    {
+      "field": "SOD Price",
+      "label": "SOD Price",
       "format": "decimal",
       "background": null,
       "text_color": "fixed",
       "text_color_value": "default"
     },
     {
-      "field": "unrealized_pnl",
-      "label": "Unreal P&L",
-      "format": "integer",
+      "field": "EOD Price",
+      "label": "EOD Price",
+      "format": "decimal",
+      "background": null,
+      "text_color": "fixed",
+      "text_color_value": "default"
+    },
+    {
+      "field": "Current Price",
+      "label": "Current",
+      "format": "decimal",
+      "background": null,
+      "text_color": "fixed",
+      "text_color_value": "default"
+    },
+    {
+      "field": "Price Chg",
+      "label": "Price Chg",
+      "format": "decimal",
+      "background": null,
+      "text_color": "sign-based"
+    },
+    {
+      "field": "Delta",
+      "label": "Delta",
+      "format": "decimal",
+      "background": "risk",
+      "text_color": "sign-based"
+    },
+    {
+      "field": "PnL",
+      "label": "P&L",
+      "format": "decimal",
       "background": "pnl",
       "text_color": "sign-based"
     },
     {
-      "field": "realized_pnl",
-      "label": "Real P&L",
-      "format": "integer",
+      "field": "Swap Delta PnL",
+      "label": "Swap Delta P&L",
+      "format": "decimal",
       "background": "pnl",
       "text_color": "sign-based"
     }

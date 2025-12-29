@@ -9,7 +9,7 @@
 
   "columns": [
     {
-      "field": "isin",
+      "field": "ISIN",
       "label": "ISIN",
       "format": "text",
       "background": null,
@@ -17,7 +17,7 @@
       "text_color_value": "positive"
     },
     {
-      "field": "description",
+      "field": "Description",
       "label": "Description",
       "format": "text",
       "background": null,
@@ -25,21 +25,29 @@
       "text_color_value": "muted"
     },
     {
-      "field": "position",
+      "field": "CCY",
+      "label": "CCY",
+      "format": "text",
+      "background": null,
+      "text_color": "fixed",
+      "text_color_value": "muted"
+    },
+    {
+      "field": "Position",
       "label": "Position",
       "format": "integer",
       "background": null,
       "text_color": "sign-based"
     },
     {
-      "field": "dv01",
+      "field": "DV01",
       "label": "DV01",
       "format": "integer",
       "background": "risk",
       "text_color": "sign-based"
     },
     {
-      "field": "pnl",
+      "field": "PnL",
       "label": "P&L",
       "format": "integer",
       "background": "pnl",

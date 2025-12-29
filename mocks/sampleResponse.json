@@ -9,7 +9,7 @@
   "cache_hit": false,
   "error": false,
   "error_stack": "",
-  "curl_command": "curl http://localhost:8000/pos_env?env_date=20251222",
+  "curl_command": "curl -X GET \"https://athena-app-dev.jpmchase.net/pos_env?env_date=20251222&pos_date=20251221&books=OfficialCUPSBook,EXOTICS&time_of_day=Close\"",
   "base_params": {
     "env_date": "20251222",
     "pos_date": "20251221",
@@ -21,82 +21,199 @@
     "futures": {
       "data": {
         "future_position": [
-          { "instrument": "FOATH6", "exchange": "EUREX", "underlying": "FOATH6", "currency": "EUREX", "position": -50, "price_chg": 0.01, "price_open": 1.23, "price_close": 1.24, "price_live": 1.24, "dv01": 4500, "pnl": -23000, "swap_pnl": -24000 },
-          { "instrument": "FGBLH6", "exchange": "EUREX", "underlying": "FGBLH6", "currency": "EUREX", "position": 30, "price_chg": -0.02, "price_open": 1.10, "price_close": 1.08, "price_live": 1.09, "dv01": 3200, "pnl": 15000, "swap_pnl": 14000 },
-          { "instrument": "FGBMH6", "exchange": "EUREX", "underlying": "FGBMH6", "currency": "EUREX", "position": 20, "price_chg": 0.00, "price_open": 1.15, "price_close": 1.15, "price_live": 1.15, "dv01": 2200, "pnl": 5000, "swap_pnl": 6000 },
-          { "instrument": "FESXH6", "exchange": "EUREX", "underlying": "FESXH6", "currency": "EUREX", "position": -10, "price_chg": 0.03, "price_open": 2.50, "price_close": 2.53, "price_live": 2.54, "dv01": 5400, "pnl": -12000, "swap_pnl": -13000 },
-          { "instrument": "FDAXH6", "exchange": "EUREX", "underlying": "FDAXH6", "currency": "EUREX", "position": 15, "price_chg": -0.01, "price_open": 3.20, "price_close": 3.19, "price_live": 3.18, "dv01": 7600, "pnl": 8000, "swap_pnl": 7000 },
-          { "instrument": "FGBLH7", "exchange": "EUREX", "underlying": "FGBLH7", "currency": "EUREX", "position": -5, "price_chg": 0.02, "price_open": 1.12, "price_close": 1.14, "price_live": 1.13, "dv01": 4400, "pnl": -4000, "swap_pnl": -5000 },
-          { "instrument": "FTSEH6", "exchange": "EUREX", "underlying": "FTSEH6", "currency": "EUREX", "position": 0, "price_chg": 0.00, "price_open": 0.00, "price_close": 0.00, "price_live": 0.00, "dv01": 0, "pnl": 0, "swap_pnl": 0 },
-          { "instrument": "FSTXH6", "exchange": "EUREX", "underlying": "FSTXH6", "currency": "EUREX", "position": 0, "price_chg": 0.00, "price_open": 0.00, "price_close": 0.00, "price_live": 0.00, "dv01": 0, "pnl": 0, "swap_pnl": 0 },
-          { "instrument": "FESMH6", "exchange": "EUREX", "underlying": "FESMH6", "currency": "EUREX", "position": 0, "price_chg": 0.00, "price_open": 0.00, "price_close": 0.00, "price_live": 0.00, "dv01": 0, "pnl": 0, "swap_pnl": 0 },
-          { "instrument": "FOATH6", "exchange": "EUREX", "underlying": "FOATH6", "currency": "EUREX", "position": -50, "price_chg": 0.01, "price_open": 1.23, "price_close": 1.24, "price_live": 1.24, "dv01": 4500, "pnl": -23000, "swap_pnl": -24000 },
-          { "instrument": "FGBLH6", "exchange": "EUREX", "underlying": "FGBLH6", "currency": "EUREX", "position": 30, "price_chg": -0.02, "price_open": 1.10, "price_close": 1.08, "price_live": 1.09, "dv01": 3200, "pnl": 15000, "swap_pnl": 14000 },
-          { "instrument": "FGBMH6", "exchange": "EUREX", "underlying": "FGBMH6", "currency": "EUREX", "position": 20, "price_chg": 0.00, "price_open": 1.15, "price_close": 1.15, "price_live": 1.15, "dv01": 2200, "pnl": 5000, "swap_pnl": 6000 },
-          { "instrument": "FESXH6", "exchange": "EUREX", "underlying": "FESXH6", "currency": "EUREX", "position": -10, "price_chg": 0.03, "price_open": 2.50, "price_close": 2.53, "price_live": 2.54, "dv01": 5400, "pnl": -12000, "swap_pnl": -13000 },
-          { "instrument": "FDAXH6", "exchange": "EUREX", "underlying": "FDAXH6", "currency": "EUREX", "position": 15, "price_chg": -0.01, "price_open": 3.20, "price_close": 3.19, "price_live": 3.18, "dv01": 7600, "pnl": 8000, "swap_pnl": 7000 },
-          { "instrument": "FGBLH7", "exchange": "EUREX", "underlying": "FGBLH7", "currency": "EUREX", "position": -5, "price_chg": 0.02, "price_open": 1.12, "price_close": 1.14, "price_live": 1.13, "dv01": 4400, "pnl": -4000, "swap_pnl": -5000 },
-          { "instrument": "FTSEH6", "exchange": "EUREX", "underlying": "FTSEH6", "currency": "EUREX", "position": 0, "price_chg": 0.00, "price_open": 0.00, "price_close": 0.00, "price_live": 0.00, "dv01": 0, "pnl": 0, "swap_pnl": 0 },
-          { "instrument": "FOATH6", "exchange": "EUREX", "underlying": "FOATH6", "currency": "EUREX", "position": -50, "price_chg": 0.01, "price_open": 1.23, "price_close": 1.24, "price_live": 1.24, "dv01": 4500, "pnl": -23000, "swap_pnl": -24000 },
-          { "instrument": "FGBLH6", "exchange": "EUREX", "underlying": "FGBLH6", "currency": "EUREX", "position": 30, "price_chg": -0.02, "price_open": 1.10, "price_close": 1.08, "price_live": 1.09, "dv01": 3200, "pnl": 15000, "swap_pnl": 14000 },
-          { "instrument": "FGBMH6", "exchange": "EUREX", "underlying": "FGBMH6", "currency": "EUREX", "position": 20, "price_chg": 0.00, "price_open": 1.15, "price_close": 1.15, "price_live": 1.15, "dv01": 2200, "pnl": 5000, "swap_pnl": 6000 },
-          { "instrument": "FESXH6", "exchange": "EUREX", "underlying": "FESXH6", "currency": "EUREX", "position": -10, "price_chg": 0.03, "price_open": 2.50, "price_close": 2.53, "price_live": 2.54, "dv01": 5400, "pnl": -12000, "swap_pnl": -13000 },
-          { "instrument": "FDAXH6", "exchange": "EUREX", "underlying": "FDAXH6", "currency": "EUREX", "position": 15, "price_chg": -0.01, "price_open": 3.20, "price_close": 3.19, "price_live": 3.18, "dv01": 7600, "pnl": 8000, "swap_pnl": 7000 },
-          { "instrument": "FGBLH7", "exchange": "EUREX", "underlying": "FGBLH7", "currency": "EUREX", "position": -5, "price_chg": 0.02, "price_open": 1.12, "price_close": 1.14, "price_live": 1.13, "dv01": 4400, "pnl": -4000, "swap_pnl": -5000 },
-          { "instrument": "FTSEH6", "exchange": "EUREX", "underlying": "FTSEH6", "currency": "EUREX", "position": 0, "price_chg": 0.00, "price_open": 0.00, "price_close": 0.00, "price_live": 0.00, "dv01": 0, "pnl": 0, "swap_pnl": 0 },
-          { "instrument": "FOATH6", "exchange": "EUREX", "underlying": "FOATH6", "currency": "EUREX", "position": -50, "price_chg": 0.01, "price_open": 1.23, "price_close": 1.24, "price_live": 1.24, "dv01": 4500, "pnl": -23000, "swap_pnl": -24000 },
-          { "instrument": "FGBLH6", "exchange": "EUREX", "underlying": "FGBLH6", "currency": "EUREX", "position": 30, "price_chg": -0.02, "price_open": 1.10, "price_close": 1.08, "price_live": 1.09, "dv01": 3200, "pnl": 15000, "swap_pnl": 14000 },
-          { "instrument": "FGBMH6", "exchange": "EUREX", "underlying": "FGBMH6", "currency": "EUREX", "position": 20, "price_chg": 0.00, "price_open": 1.15, "price_close": 1.15, "price_live": 1.15, "dv01": 2200, "pnl": 5000, "swap_pnl": 6000 },
-          { "instrument": "FESXH6", "exchange": "EUREX", "underlying": "FESXH6", "currency": "EUREX", "position": -10, "price_chg": 0.03, "price_open": 2.50, "price_close": 2.53, "price_live": 2.54, "dv01": 5400, "pnl": -12000, "swap_pnl": -13000 },
-          { "instrument": "FDAXH6", "exchange": "EUREX", "underlying": "FDAXH6", "currency": "EUREX", "position": 15, "price_chg": -0.01, "price_open": 3.20, "price_close": 3.19, "price_live": 3.18, "dv01": 7600, "pnl": 8000, "swap_pnl": 7000 },
-          { "instrument": "FGBLH7", "exchange": "EUREX", "underlying": "FGBLH7", "currency": "EUREX", "position": -5, "price_chg": 0.02, "price_open": 1.12, "price_close": 1.14, "price_live": 1.13, "dv01": 4400, "pnl": -4000, "swap_pnl": -5000 },
-          { "instrument": "FTSEH6", "exchange": "EUREX", "underlying": "FTSEH6", "currency": "EUREX", "position": 0, "price_chg": 0.00, "price_open": 0.00, "price_close": 0.00, "price_live": 0.00, "dv01": 0, "pnl": 0, "swap_pnl": 0 },
-          { "instrument": "FOATH6", "exchange": "EUREX", "underlying": "FOATH6", "currency": "EUREX", "position": -50, "price_chg": 0.01, "price_open": 1.23, "price_close": 1.24, "price_live": 1.24, "dv01": 4500, "pnl": -23000, "swap_pnl": -24000 },
-          { "instrument": "FGBLH6", "exchange": "EUREX", "underlying": "FGBLH6", "currency": "EUREX", "position": 30, "price_chg": -0.02, "price_open": 1.10, "price_close": 1.08, "price_live": 1.09, "dv01": 3200, "pnl": 15000, "swap_pnl": 14000 },
-          { "instrument": "FGBMH6", "exchange": "EUREX", "underlying": "FGBMH6", "currency": "EUREX", "position": 20, "price_chg": 0.00, "price_open": 1.15, "price_close": 1.15, "price_live": 1.15, "dv01": 2200, "pnl": 5000, "swap_pnl": 6000 },
-          { "instrument": "FESXH6", "exchange": "EUREX", "underlying": "FESXH6", "currency": "EUREX", "position": -10, "price_chg": 0.03, "price_open": 2.50, "price_close": 2.53, "price_live": 2.54, "dv01": 5400, "pnl": -12000, "swap_pnl": -13000 },
-          { "instrument": "FDAXH6", "exchange": "EUREX", "underlying": "FDAXH6", "currency": "EUREX", "position": 15, "price_chg": -0.01, "price_open": 3.20, "price_close": 3.19, "price_live": 3.18, "dv01": 7600, "pnl": 8000, "swap_pnl": 7000 },
-          { "instrument": "FGBLH7", "exchange": "EUREX", "underlying": "FGBLH7", "currency": "EUREX", "position": -5, "price_chg": 0.02, "price_open": 1.12, "price_close": 1.14, "price_live": 1.13, "dv01": 4400, "pnl": -4000, "swap_pnl": -5000 },
-          { "instrument": "FTSEH6", "exchange": "EUREX", "underlying": "FTSEH6", "currency": "EUREX", "position": 0, "price_chg": 0.00, "price_open": 0.00, "price_close": 0.00, "price_live": 0.00, "dv01": 0, "pnl": 0, "swap_pnl": 0 }
-          
+          {
+            "Contract": "AUD 10y",
+            "ExpiryDate": "2025-12-15",
+            "Instrument": "YTCZ5",
+            "Underlying": "YTCZ5",
+            "CCY": "AUD",
+            "Family": "BFU",
+            "NoOfContracts": 0,
+            "Price Chg": "",
+            "PnL": "",
+            "SOD Price": 95.24,
+            "EOD Price": 95.24,
+            "Current Price": "",
+            "Delta": "",
+            "Swap Delta PnL": ""
+          },
+          {
+            "Contract": "AUD 10y",
+            "ExpiryDate": "2026-03-16",
+            "Instrument": "YTCH6",
+            "Underlying": "YTCH6",
+            "CCY": "AUD",
+            "Family": "BFU",
+            "NoOfContracts": 66,
+            "Price Chg": 0.0125,
+            "PnL": 0.552,
+            "SOD Price": 95.1875,
+            "EOD Price": 95.1875,
+            "Current Price": 95.2,
+            "Delta": -3.715,
+            "Swap Delta PnL": 8.559
+          },
+          {
+            "Contract": "AUD 3y",
+            "ExpiryDate": "2025-12-15",
+            "Instrument": "YTTZ5",
+            "Underlying": "YTTZ5",
+            "CCY": "AUD",
+            "Family": "BFU",
+            "NoOfContracts": 0,
+            "Price Chg": "",
+            "PnL": "",
+            "SOD Price": 95.87,
+            "EOD Price": 95.87,
+            "Current Price": "",
+            "Delta": "",
+            "Swap Delta PnL": ""
+          },
+          {
+            "Contract": "EUR 10y",
+            "ExpiryDate": "2026-03-06",
+            "Instrument": "FGBLH6",
+            "Underlying": "FGBLH6",
+            "CCY": "EUR",
+            "Family": "BFU",
+            "NoOfContracts": 30,
+            "Price Chg": -0.02,
+            "PnL": 15000,
+            "SOD Price": 131.10,
+            "EOD Price": 131.10,
+            "Current Price": 131.08,
+            "Delta": 3200,
+            "Swap Delta PnL": 14000
+          },
+          {
+            "Contract": "EUR 5y",
+            "ExpiryDate": "2026-03-06",
+            "Instrument": "FGBMH6",
+            "Underlying": "FGBMH6",
+            "CCY": "EUR",
+            "Family": "BFU",
+            "NoOfContracts": 20,
+            "Price Chg": 0.00,
+            "PnL": 5000,
+            "SOD Price": 118.15,
+            "EOD Price": 118.15,
+            "Current Price": 118.15,
+            "Delta": 2200,
+            "Swap Delta PnL": 6000
+          },
+          {
+            "Contract": "EUR 2y",
+            "ExpiryDate": "2026-03-06",
+            "Instrument": "FGBSH6",
+            "Underlying": "FGBSH6",
+            "CCY": "EUR",
+            "Family": "BFU",
+            "NoOfContracts": -50,
+            "Price Chg": 0.01,
+            "PnL": -23000,
+            "SOD Price": 105.23,
+            "EOD Price": 105.23,
+            "Current Price": 105.24,
+            "Delta": 4500,
+            "Swap Delta PnL": -24000
+          },
+          {
+            "Contract": "GBP 10y",
+            "ExpiryDate": "2026-03-27",
+            "Instrument": "WBSH6",
+            "Underlying": "WBSH6",
+            "CCY": "GBP",
+            "Family": "BFU",
+            "NoOfContracts": 15,
+            "Price Chg": -0.01,
+            "PnL": 8000,
+            "SOD Price": 94.20,
+            "EOD Price": 94.20,
+            "Current Price": 94.19,
+            "Delta": 7600,
+            "Swap Delta PnL": 7000
+          },
+          {
+            "Contract": "USD 10y",
+            "ExpiryDate": "2026-03-20",
+            "Instrument": "ZNH6",
+            "Underlying": "ZNH6",
+            "CCY": "USD",
+            "Family": "BFU",
+            "NoOfContracts": -5,
+            "Price Chg": 0.02,
+            "PnL": -4000,
+            "SOD Price": 109.12,
+            "EOD Price": 109.12,
+            "Current Price": 109.14,
+            "Delta": 4400,
+            "Swap Delta PnL": -5000
+          }
         ],
         "future_totals": {
-          "position": 220,
-          "dv01": 43600,
-          "pnl": 59400
-        },
-        "summary": {
-          "total_pnl": 59400,
-          "total_dv01": 43600,
-          "position_count": 6
+          "NoOfContracts": 76,
+          "Delta": 21685,
+          "PnL": 1552
         }
       },
       "metadata": {
         "last_updated": "2025-12-22T10:00:04Z",
         "status": "ok",
         "refresh_duration_ms": 1368,
-        "repro": "python -c \"from rpm import futures; futures.get_positions()\""
+        "repro": "from rates.nlrad.apps.exotics.rpm.backend.business.futures import get_futures; get_futures(env_date='20251222', pos_date='20251221')"
       },
       "error_stack": ""
     },
     "bonds": {
       "data": {
         "bond_position": [
-          { "isin": "DE0001102481", "description": "DBR 0 02/15/30", "position": 5000000, "dv01": 4250, "pnl": 18500 },
-          { "isin": "DE0001102580", "description": "DBR 0 08/15/31", "position": -3000000, "dv01": -2890, "pnl": -7200 },
-          { "isin": "FR0014002WK3", "description": "OAT 0.5 05/25/40", "position": 2500000, "dv01": 3100, "pnl": 9800 }
+          {
+            "ISIN": "DE0001102481",
+            "Description": "DBR 0 02/15/30",
+            "CCY": "EUR",
+            "Position": 5000000,
+            "DV01": 4250,
+            "PnL": 18500
+          },
+          {
+            "ISIN": "DE0001102580",
+            "Description": "DBR 0 08/15/31",
+            "CCY": "EUR",
+            "Position": -3000000,
+            "DV01": -2890,
+            "PnL": -7200
+          },
+          {
+            "ISIN": "FR0014002WK3",
+            "Description": "OAT 0.5 05/25/40",
+            "CCY": "EUR",
+            "Position": 2500000,
+            "DV01": 3100,
+            "PnL": 9800
+          }
         ],
         "bond_totals": {
-          "dv01": 4460,
-          "pnl": 21100
+          "DV01": 4460,
+          "PnL": 21100
         }
       },
       "metadata": {
         "last_updated": "2025-12-22T10:00:03Z",
         "status": "ok",
-        "refresh_duration_ms": 892
+        "refresh_duration_ms": 892,
+        "repro": "from rates.nlrad.apps.exotics.rpm.backend.business.bonds import get_bonds; get_bonds(env_date='20251222', pos_date='20251221')"
       },
       "error_stack": ""
+    },
+    "futures_error": {
+      "data": null,
+      "metadata": {
+        "last_updated": null,
+        "status": "error",
+        "refresh_duration_ms": 4,
+        "repro": "from rates.nlrad.apps.exotics.rpm.backend.business.futures import get_futures; get_futures(env_date='20251222', pos_date='20251221')"
+      },
+      "error_stack": "\n=== Exception ===\nTraceback (most recent call last):\n  File \"/app/rates/nlrad/apps/exotics/rpm/backend/handlers/pos_env.py\", line 89, in get\n    result = await self.executor.run(get_futures, params)\n  File \"/app/rates/nlrad/apps/exotics/rpm/backend/business/futures.py\", line 42, in get_futures\n    data = fetch_from_kapital(params)\n  File \"/app/rates/nlrad/apps/exotics/rpm/backend/clients/kapital.py\", line 123, in fetch_from_kapital\n    response = await client.get(url, timeout=30)\n  File \"/app/rates/nlrad/apps/exotics/rpm/backend/clients/base.py\", line 67, in get\n    raise ConnectionError(f\"Service unavailable: {url}\")\nConnectionError: Service unavailable: https://kapital.jpmchase.net/api/v1/positions\n\n=== Request Context ===\nenv_date: 20251222\npos_date: 20251221\nbooks: ['OfficialCUPSBook', 'EXOTICS']\ntime_of_day: Close"
     }
   }
 }

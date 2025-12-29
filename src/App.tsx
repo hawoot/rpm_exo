@@ -7,7 +7,8 @@ import { useState, useRef } from 'react';
 import Sidebar from './components/layout/Sidebar';
 import ParamsForm from './components/forms/ParamsForm';
 import DataDisplay from './components/DataDisplay';
-import Metadata from './components/Metadata';
+import RequestInfo from './components/RequestInfo';
+import ErrorDisplay from './components/ErrorDisplay';
 
 import { useData } from './hooks/useData';
 import { getSection, getDefaultSectionId, componentConfigs } from './config/registry';
@@ -181,17 +182,11 @@ function App(): JSX.Element {
           </h2>
 
           {error && (
-            <div
-              style={{
-                padding: '16px',
-                backgroundColor: '#fef2f2',
-                border: '1px solid #fecaca',
-                borderRadius: '6px',
-                color: '#dc2626',
-                marginBottom: '16px',
-              }}
-            >
-              <strong>Error:</strong> {error}
+            <div style={{ marginBottom: '16px' }}>
+              <ErrorDisplay
+                title="Fetch Error"
+                errorStack={error}
+              />
             </div>
           )}
 
@@ -265,7 +260,7 @@ function App(): JSX.Element {
                 });
             })()}
 
-          <Metadata apiData={apiData} currentSection={currentSection} />
+          <RequestInfo apiData={apiData} />
         </main>
       </div>
     </div>

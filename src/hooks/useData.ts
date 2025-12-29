@@ -29,6 +29,13 @@ const getPreviousWorkingDay = (date: Date): Date => {
   return result;
 };
 
+// Join base URL with endpoint, preserving the base path
+const joinUrl = (base: string, path: string): string => {
+  const cleanBase = base.replace(/\/+$/, '');
+  const cleanPath = path.replace(/^\/+/, '');
+  return `${cleanBase}/${cleanPath}`;
+};
+
 const today = new Date();
 const DEFAULT_PARAMS: RequestParams = {
   env_date: formatDate(today),
@@ -54,7 +61,7 @@ export function useData(): UseDataReturn {
   // Build the full request URL for display (useful for debugging)
   const buildRequestUrl = useCallback((): string => {
     try {
-      const url = new URL(apiConfig.endpoints.pos_env, effectiveBaseUrl);
+      const url = new URL(joinUrl(effectiveBaseUrl, apiConfig.endpoints.pos_env));
       Object.entries(params).forEach(([key, value]) => {
         if (Array.isArray(value)) {
           url.searchParams.set(key, value.join(','));
@@ -114,7 +121,7 @@ export function useData(): UseDataReturn {
   //   setError(null);
 
   //   // Build URL outside try block so it's accessible in catch
-  //   const url = new URL(apiConfig.endpoints.pos_env, effectiveBaseUrl);
+  //   const url = new URL(joinUrl(effectiveBaseUrl, apiConfig.endpoints.pos_env));
   //   Object.entries(params).forEach(([key, value]) => {
   //     if (Array.isArray(value)) {
   //       url.searchParams.set(key, value.join(','));

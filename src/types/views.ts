@@ -79,7 +79,6 @@ export interface TableConfig extends BaseComponentConfig {
   display_type: 'table';
   totals_path?: string;
   columns: ColumnDefinition[];
-  font_size?: number;
 }
 
 /** Card configuration */
@@ -153,7 +152,6 @@ export interface TableProps {
   columns: ColumnDefinition[];
   totals?: TotalsRecord | null;
   label?: string;
-  fontSize?: number;
 }
 
 /** Card component props */

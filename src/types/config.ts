@@ -21,37 +21,8 @@ export interface FormatConfig {
 /** Complete formats configuration */
 export type FormatsConfig = Record<string, FormatConfig>;
 
-/** Background color tokens */
-export type BackgroundToken =
-  | 'pnl'
-  | 'risk'
-  | 'rate'
-  | 'header'
-  | 'total'
-  | 'row-even'
-  | 'row-odd'
-  | 'row-hover'
-  | 'col-hover'
-  | 'cell-hover'
-  | 'header-hover'
-  | 'filter-row';
-
 /** Text color tokens */
 export type TextColorToken = 'default' | 'negative' | 'positive' | 'muted' | 'active';
-
-/** UI color tokens */
-export type UiColorToken =
-  | 'button-bg'
-  | 'button-bg-active'
-  | 'button-text'
-  | 'button-text-active'
-  | 'success-bg'
-  | 'success-text'
-  | 'danger-text'
-  | 'focus-ring';
-
-/** Border color tokens */
-export type BorderToken = 'default' | 'strong';
 
 /** Theme configuration from theme.json */
 export interface ThemeConfig {
@@ -71,7 +42,6 @@ export interface ColumnDefinition {
   field: string;
   label: string;
   format: FormatType;
-  width?: number;
   background: string | null;
   text_color: TextColorMode;
   text_color_value?: TextColorToken;

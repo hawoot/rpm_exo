@@ -1,434 +1,111 @@
 /**
- * Table Component - Feature-rich data table
+ * Table Component - AG Grid wrapper
  */
 
-import { useState, useMemo, useRef } from 'react';
-import Cell from './Cell';
-import { formatsConfig } from '../config/registry';
-import { bg, text, ui, getBorderColor, getBackgroundColor } from '../lib/colors';
+import { useMemo, useCallback, useState } from 'react';
+import { AgGridReact } from 'ag-grid-react';
+import {
+  AllCommunityModule,
+  ModuleRegistry,
+  themeQuartz,
+} from 'ag-grid-community';
+import type { ColDef } from 'ag-grid-community';
+import { convertColumnsToColDefs } from '../lib/agGridUtils';
 import type { TableProps } from '../types';
 
-const formats = formatsConfig;
-const HOVER_BORDER = '1px solid #e57373';
+// Register AG Grid modules (required for v31+)
+ModuleRegistry.registerModules([AllCommunityModule]);
 
-const isNumericFormat = (format: string): boolean => {
-  return formats[format]?.is_numeric ?? false;
-};
+// Subtle grey theme
+const greyTheme = themeQuartz.withParams({
+  backgroundColor: '#f8f9fa',
+  headerBackgroundColor: '#f1f3f4',
+  rowHoverColor: '#e8eaed',
+  columnHoverColor: '#e8eaed',
+});
 
-interface SortConfig {
-  field: string;
-  direction: 'asc' | 'desc';
-}
+function Table({ data, columns, totals, label }: TableProps): JSX.Element {
+  const [copied, setCopied] = useState(false);
+  const columnDefs = useMemo(() => convertColumnsToColDefs(columns), [columns]);
 
-type HoveredRowType = number | 'totals' | null;
+  const pinnedBottomRowData = useMemo(() => {
+    if (!totals) return undefined;
+    const firstField = columns[0]?.field ?? '';
+    return [{ ...totals, [firstField]: 'Total' }];
+  }, [totals, columns]);
 
-function Table({ data, columns: initialColumns, totals, label }: TableProps): JSX.Element {
-  const [hoveredRow, setHoveredRow] = useState<HoveredRowType>(null);
-  const [hoveredCol, setHoveredCol] = useState<number | null>(null);
-  const [sortConfig, setSortConfig] = useState<SortConfig | null>(null);
-  const [filters, setFilters] = useState<Record<string, string>>({});
-  const [showFilters, setShowFilters] = useState<boolean>(false);
-  const [columnWidths, setColumnWidths] = useState<Record<string, number>>(() => {
-    const widths: Record<string, number> = {};
-    initialColumns.forEach((col) => {
-      widths[col.field] = col.width ?? 100;
-    });
-    return widths;
-  });
-  const [copyFeedback, setCopyFeedback] = useState<string | null>(null);
+  const defaultColDef = useMemo<ColDef>(() => ({
+    sortable: true,
+    filter: true,
+    resizable: true,
+    floatingFilter: true,
+    minWidth: 50,
+  }), []);
 
-  const resizing = useRef<{ field: string; startX: number; startWidth: number } | null>(null);
+  const copyToClipboard = useCallback(() => {
+    const headers = columns.map(c => c.label).join('\t');
+    const rows = (data ?? []).map(row =>
+      columns.map(c => row[c.field] ?? '').join('\t')
+    ).join('\n');
 
-  if (!data || !Array.isArray(data)) {
+    let text = headers + '\n' + rows;
+    if (totals) {
+      const totalsRow = columns.map((c, i) =>
+        i === 0 ? 'Total' : (totals[c.field] ?? '')
+      ).join('\t');
+      text += '\n' + totalsRow;
+    }
+
+    void navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  }, [data, columns, totals]);
+
+  if (!data?.length) {
     return (
-      <div style={{ padding: '16px', color: text('muted') }}>
+      <div style={{ padding: '16px', color: '#9ca3af' }}>
         No data available
       </div>
     );
   }
 
-  const filteredData = useMemo(() => {
-    if (Object.keys(filters).length === 0) return data;
-
-    return data.filter((row) => {
-      return Object.entries(filters).every(([field, filterValue]) => {
-        if (!filterValue || filterValue.trim() === '') return true;
-
-        const cellValue = row[field];
-        const col = initialColumns.find((c) => c.field === field);
-
-        if (col && isNumericFormat(col.format)) {
-          const numValue = Number(cellValue);
-          const filterStr = filterValue.trim();
-
-          if (filterStr.startsWith('>=')) return numValue >= Number(filterStr.slice(2));
-          if (filterStr.startsWith('<=')) return numValue <= Number(filterStr.slice(2));
-          if (filterStr.startsWith('>')) return numValue > Number(filterStr.slice(1));
-          if (filterStr.startsWith('<')) return numValue < Number(filterStr.slice(1));
-          if (filterStr.startsWith('=')) return numValue === Number(filterStr.slice(1));
-          return String(cellValue).includes(filterStr);
-        }
-
-        return String(cellValue).toLowerCase().includes(filterValue.toLowerCase());
-      });
-    });
-  }, [data, filters, initialColumns]);
-
-  const sortedData = useMemo(() => {
-    if (!sortConfig) return filteredData;
-
-    const { field, direction } = sortConfig;
-    const col = initialColumns.find((c) => c.field === field);
-    const isNumeric = col ? isNumericFormat(col.format) : false;
-
-    return [...filteredData].sort((a, b) => {
-      const aVal = a[field];
-      const bVal = b[field];
-
-      if (aVal == null && bVal == null) return 0;
-      if (aVal == null) return direction === 'asc' ? 1 : -1;
-      if (bVal == null) return direction === 'asc' ? -1 : 1;
-
-      let comparison = 0;
-      if (isNumeric) {
-        comparison = Number(aVal) - Number(bVal);
-      } else {
-        comparison = String(aVal).localeCompare(String(bVal));
-      }
-
-      return direction === 'asc' ? comparison : -comparison;
-    });
-  }, [filteredData, sortConfig, initialColumns]);
-
-  const handleSort = (field: string): void => {
-    setSortConfig((current) => {
-      if (current?.field !== field) {
-        return { field, direction: 'asc' };
-      }
-      if (current.direction === 'asc') {
-        return { field, direction: 'desc' };
-      }
-      return null;
-    });
-  };
-
-  const getSortIndicator = (field: string): string => {
-    if (sortConfig?.field !== field) return ' ↕';
-    return sortConfig.direction === 'asc' ? ' ↑' : ' ↓';
-  };
-
-  const copyToClipboard = (): void => {
-    const headers = initialColumns.map((c) => c.label).join('\t');
-    const rows = sortedData
-      .map((row) => initialColumns.map((c) => row[c.field] ?? '').join('\t'))
-      .join('\n');
-
-    let clipText = headers + '\n' + rows;
-    if (totals) {
-      const totalsRow = initialColumns
-        .map((c, i) => (i === 0 ? 'Total' : (totals[c.field] ?? '')))
-        .join('\t');
-      clipText += '\n' + totalsRow;
-    }
-
-    void navigator.clipboard.writeText(clipText);
-    setCopyFeedback('Copied!');
-    setTimeout(() => setCopyFeedback(null), 1500);
-  };
-
-  const handleFilterChange = (field: string, value: string): void => {
-    setFilters((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const clearFilters = (): void => {
-    setFilters({});
-    setSortConfig(null);
-  };
-
-  const startResize = (e: React.MouseEvent, field: string): void => {
-    e.preventDefault();
-    e.stopPropagation();
-    const startWidth = columnWidths[field] ?? 100;
-    resizing.current = { field, startX: e.clientX, startWidth };
-    document.addEventListener('mousemove', handleResize);
-    document.addEventListener('mouseup', stopResize);
-  };
-
-  const handleResize = (e: MouseEvent): void => {
-    if (!resizing.current) return;
-    const diff = e.clientX - resizing.current.startX;
-    const newWidth = Math.max(50, resizing.current.startWidth + diff);
-    const field = resizing.current.field;
-    setColumnWidths((prev) => ({ ...prev, [field]: newWidth }));
-  };
-
-  const stopResize = (): void => {
-    resizing.current = null;
-    document.removeEventListener('mousemove', handleResize);
-    document.removeEventListener('mouseup', stopResize);
-  };
-
-  const hasActiveFilters = Object.values(filters).some((v) => v && v.trim() !== '');
-
-  // Column border styles based on position
-  const getColBorderStyle = (colIndex: number, isFirst: boolean, isLast: boolean): React.CSSProperties => {
-    if (hoveredCol !== colIndex) return {};
-    return {
-      borderLeft: HOVER_BORDER,
-      borderRight: HOVER_BORDER,
-      borderTop: isFirst ? HOVER_BORDER : undefined,
-      borderBottom: isLast ? HOVER_BORDER : undefined,
-    };
-  };
-
   return (
     <div style={{ marginBottom: '24px' }}>
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          marginBottom: '8px',
-          gap: '12px',
-        }}
-      >
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
         {label && (
-          <h3 style={{ fontSize: '14px', fontWeight: 600, color: text('default'), margin: 0 }}>
+          <h3 style={{ fontSize: '14px', fontWeight: 600, margin: 0, color: '#374151' }}>
             {label}
-            {(hasActiveFilters || sortConfig) && (
-              <span style={{ marginLeft: '8px', fontSize: '11px', color: text('muted') }}>
-                ({sortedData.length} of {data.length})
-              </span>
-            )}
           </h3>
         )}
-
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            style={{
-              padding: '4px 8px',
-              fontSize: '12px',
-              border: `1px solid ${getBorderColor('strong')}`,
-              borderRadius: '4px',
-              backgroundColor: showFilters || hasActiveFilters ? ui('button-bg-active') : ui('button-bg'),
-              color: hasActiveFilters ? text('active') : ui('button-text'),
-              cursor: 'pointer',
-            }}
-          >
-            {showFilters ? '▲ Filters' : '▼ Filters'}
-          </button>
-
-          {(hasActiveFilters || sortConfig) && (
-            <button
-              onClick={clearFilters}
-              style={{
-                padding: '4px 8px',
-                fontSize: '12px',
-                border: 'none',
-                backgroundColor: 'transparent',
-                color: ui('danger-text'),
-                cursor: 'pointer',
-              }}
-            >
-              Reset
-            </button>
-          )}
-
-          <button
-            onClick={copyToClipboard}
-            style={{
-              padding: '4px 8px',
-              fontSize: '12px',
-              border: `1px solid ${getBorderColor('strong')}`,
-              borderRadius: '4px',
-              backgroundColor: copyFeedback ? ui('success-bg') : ui('button-bg'),
-              color: copyFeedback ? ui('success-text') : ui('button-text'),
-              cursor: 'pointer',
-            }}
-          >
-            {copyFeedback ?? '📋 Copy'}
-          </button>
-        </div>
-      </div>
-
-      <div style={{ overflowX: 'auto' }}>
-        <table
+        <button
+          onClick={copyToClipboard}
           style={{
-            width: '100%',
-            borderCollapse: 'collapse',
-            backgroundColor: bg('row-even'),
-            border: `1px solid ${getBorderColor('default')}`,
+            padding: '4px 12px',
+            fontSize: '12px',
+            border: 'none',
             borderRadius: '4px',
-          }}
-          onMouseLeave={() => {
-            setHoveredRow(null);
-            setHoveredCol(null);
+            backgroundColor: copied ? '#10b981' : '#374151',
+            color: '#ffffff',
+            cursor: 'pointer',
+            transition: 'all 0.2s ease',
+            minWidth: '60px',
           }}
         >
-          <thead>
-            <tr>
-              {initialColumns.map((col, colIndex) => (
-                <th
-                  key={col.field}
-                  onClick={() => handleSort(col.field)}
-                  style={{
-                    padding: '8px 12px',
-                    textAlign: col.format === 'text' ? 'left' : 'right',
-                    backgroundColor: bg('header'),
-                    color: sortConfig?.field === col.field ? text('active') : text('default'),
-                    fontWeight: 600,
-                    fontSize: '12px',
-                    whiteSpace: 'nowrap',
-                    borderBottom: `1px solid ${getBorderColor('default')}`,
-                    width: `${columnWidths[col.field] ?? 100}px`,
-                    minWidth: `${columnWidths[col.field] ?? 100}px`,
-                    position: 'relative',
-                    cursor: 'pointer',
-                    userSelect: 'none',
-                    ...getColBorderStyle(colIndex, true, false),
-                  }}
-                  onMouseEnter={() => setHoveredCol(colIndex)}
-                >
-                  {col.label}
-                  <span
-                    style={{
-                      opacity: sortConfig?.field === col.field ? 1 : 0.3,
-                      fontSize: '10px',
-                    }}
-                  >
-                    {getSortIndicator(col.field)}
-                  </span>
-                  <div
-                    style={{
-                      position: 'absolute',
-                      right: 0,
-                      top: 0,
-                      bottom: 0,
-                      width: '4px',
-                      cursor: 'col-resize',
-                    }}
-                    onMouseDown={(e) => startResize(e, col.field)}
-                    onClick={(e) => e.stopPropagation()}
-                  />
-                </th>
-              ))}
-            </tr>
+          {copied ? 'Copied!' : 'Copy'}
+        </button>
+      </div>
 
-            {showFilters && (
-              <tr>
-                {initialColumns.map((col) => (
-                  <th
-                    key={`filter-${col.field}`}
-                    style={{
-                      padding: '4px',
-                      backgroundColor: bg('filter-row'),
-                      borderBottom: `1px solid ${getBorderColor('default')}`,
-                    }}
-                  >
-                    <input
-                      type="text"
-                      placeholder={isNumericFormat(col.format) ? '>0, <100...' : 'Filter...'}
-                      value={filters[col.field] ?? ''}
-                      onChange={(e) => handleFilterChange(col.field, e.target.value)}
-                      style={{
-                        width: '100%',
-                        padding: '4px 6px',
-                        fontSize: '11px',
-                        border: `1px solid ${getBorderColor('strong')}`,
-                        borderRadius: '3px',
-                        boxSizing: 'border-box',
-                      }}
-                    />
-                  </th>
-                ))}
-              </tr>
-            )}
-          </thead>
-
-          <tbody>
-            {sortedData.map((row, rowIndex) => {
-              const isLastRow = !totals && rowIndex === sortedData.length - 1;
-              return (
-                <tr
-                  key={rowIndex}
-                  onMouseEnter={() => setHoveredRow(rowIndex)}
-                  style={{
-                    outline: hoveredRow === rowIndex ? HOVER_BORDER : 'none',
-                    outlineOffset: '-1px',
-                  }}
-                >
-                  {initialColumns.map((col, colIndex) => (
-                    <td
-                      key={col.field}
-                      style={{
-                        padding: '8px 12px',
-                        textAlign: col.format === 'text' ? 'left' : 'right',
-                        backgroundColor: getBackgroundColor(col.background) ?? (rowIndex % 2 === 0 ? bg('row-even') : bg('row-odd')),
-                        borderBottom: `1px solid ${getBorderColor('default')}`,
-                        width: `${columnWidths[col.field] ?? 100}px`,
-                        minWidth: `${columnWidths[col.field] ?? 100}px`,
-                        ...getColBorderStyle(colIndex, false, isLastRow),
-                      }}
-                      onMouseEnter={() => setHoveredCol(colIndex)}
-                    >
-                      <Cell
-                        value={row[col.field]}
-                        format={col.format}
-                        textColor={col.text_color}
-                        textColorValue={col.text_color_value}
-                      />
-                    </td>
-                  ))}
-                </tr>
-              );
-            })}
-
-            {sortedData.length === 0 && (
-              <tr>
-                <td
-                  colSpan={initialColumns.length}
-                  style={{ padding: '24px', textAlign: 'center', color: text('muted') }}
-                >
-                  No matching records
-                </td>
-              </tr>
-            )}
-
-            {totals && sortedData.length > 0 && (
-              <tr
-                onMouseEnter={() => setHoveredRow('totals')}
-                style={{
-                  fontWeight: 600,
-                  outline: hoveredRow === 'totals' ? HOVER_BORDER : 'none',
-                  outlineOffset: '-1px',
-                }}
-              >
-                {initialColumns.map((col, colIndex) => (
-                  <td
-                    key={col.field}
-                    style={{
-                      padding: '8px 12px',
-                      textAlign: col.format === 'text' ? 'left' : 'right',
-                      backgroundColor: getBackgroundColor(col.background) ?? bg('total'),
-                      borderBottom: `1px solid ${getBorderColor('default')}`,
-                      width: `${columnWidths[col.field] ?? 100}px`,
-                      minWidth: `${columnWidths[col.field] ?? 100}px`,
-                      ...getColBorderStyle(colIndex, false, true),
-                    }}
-                    onMouseEnter={() => setHoveredCol(colIndex)}
-                  >
-                    <Cell
-                      value={colIndex === 0 ? 'Total' : totals[col.field]}
-                      format={colIndex === 0 ? 'text' : col.format}
-                      textColor={col.text_color}
-                      textColorValue={col.text_color_value}
-                    />
-                  </td>
-                ))}
-              </tr>
-            )}
-          </tbody>
-        </table>
+      <div style={{ width: '100%' }}>
+        <AgGridReact
+          theme={greyTheme}
+          rowData={data}
+          columnDefs={columnDefs}
+          defaultColDef={defaultColDef}
+          pinnedBottomRowData={pinnedBottomRowData}
+          domLayout="autoHeight"
+          autoSizeStrategy={{ type: 'fitCellContents' }}
+          columnHoverHighlight={true}
+        />
       </div>
     </div>
   );

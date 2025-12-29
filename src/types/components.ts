@@ -35,14 +35,6 @@ export interface CardProps {
   textColorValue?: TextColorToken;
 }
 
-export interface CellProps {
-  value: unknown;
-  format?: FormatType;
-  textColor?: TextColorMode;
-  textColorValue?: TextColorToken;
-  isHeader?: boolean;
-}
-
 export interface DataDisplayProps {
   componentConfig: ComponentConfig;
   apiData: ApiResponse;

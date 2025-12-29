@@ -6,20 +6,37 @@ import { useState, useRef, useEffect } from 'react';
 import type { ParamsFormProps, TimeOfDay, EnvironmentConfig } from '../../types';
 
 const AVAILABLE_BOOKS: string[] = [
-  'OfficialCUPSBook',
-  'EXOTICS',
-  'RATES_EUR',
-  'RATES_USD',
-  'RATES_GBP',
-  'FX_SPOT',
-  'FX_OPTIONS',
-];
+    'OfficialCUPSBook',
+    'EXOTICS',
+    'YCSO',
+    'BERM',
+    'IREXOTICS MGMT',
+    'IREXOTICS PREPAY',
+    'Sovereign Non Linear Book',
+    'YCSO BACKBOOK',
+    'Exotics Secondary Trading Book',
+    'ISSUANCE_EXOTICS',
+    'IR EXOTICS - YEN SINGLE',
+    'CORRELATION GAMMA',
+    'Rates LDN Options SOV NL Securities',
+    'LDN Option SOV NL Securities',
+  ];
 
 const BOOK_GROUPS: Record<string, string[]> = {
-  Main: ['OfficialCUPSBook', 'RATES_EUR', 'RATES_USD', 'RATES_GBP'],
-  MGMT: ['OfficialCUPSBook'],
-  Rates: ['RATES_EUR', 'RATES_USD', 'RATES_GBP'],
-  FX: ['FX_SPOT', 'FX_OPTIONS'],
+  Main: [
+    'OfficialCUPSBook',
+    'EXOTICS',
+    'YCSO',
+    'BERM',
+    'IREXOTICS PREPAY',
+    'Sovereign Non Linear Book',
+    'YCSO BACKBOOK',
+    'Exotics Secondary Trading Book',
+    'IR EXOTICS - YEN SINGLE',
+    'Rates LDN Options SOV NL Securities',
+    'LDN Option SOV NL Securities',
+  ],
+  MGMT: ['IREXOTICS MGMT'],
   All: AVAILABLE_BOOKS,
 };
 

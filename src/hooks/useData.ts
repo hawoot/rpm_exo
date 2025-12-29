@@ -40,7 +40,19 @@ const today = new Date();
 const DEFAULT_PARAMS: RequestParams = {
   env_date: formatDate(today),
   pos_date: formatDate(getPreviousWorkingDay(today)),
-  books: ['OfficialCUPSBook', 'RATES_EUR', 'RATES_USD', 'RATES_GBP'],
+  books: [
+    'OfficialCUPSBook',
+    'EXOTICS',
+    'YCSO',
+    'BERM',
+    'IREXOTICS PREPAY',
+    'Sovereign Non Linear Book',
+    'YCSO BACKBOOK',
+    'Exotics Secondary Trading Book',
+    'IR EXOTICS - YEN SINGLE',
+    'Rates LDN Options SOV NL Securities',
+    'LDN Option SOV NL Securities',
+  ],
   time_of_day: 'Live',
 };
 

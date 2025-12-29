@@ -1,6 +1,0 @@
-{
-  "nav_groups": [
-    { "id": "overview", "label": "Overview", "order": 1 },
-    { "id": "positions", "label": "Positions", "order": 2 }
-  ]
-}

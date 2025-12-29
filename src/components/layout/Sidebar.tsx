@@ -56,42 +56,23 @@ function SectionButton({ section, isActive, onClick, indent = false }: SectionBu
   );
 }
 
-function Sidebar({ currentSection, onSectionChange, sectionConfigs }: SidebarProps): JSX.Element {
-  const { nav_groups } = navbarConfig;
-  const sections = Object.values(sectionConfigs);
+function Sidebar({ currentSection, onSectionChange }: SidebarProps): JSX.Element {
+  const { groups } = navbarConfig;
 
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
 
-  const toggleGroup = (groupId: string): void => {
+  const toggleGroup = (groupLabel: string): void => {
     setExpandedGroups((prev) => ({
       ...prev,
-      [groupId]: !prev[groupId],
+      [groupLabel]: !prev[groupLabel],
     }));
   };
 
-  const groupedSections = useMemo(() => {
-    const grouped: Record<string, SectionConfig[]> = {};
-    nav_groups.forEach((group) => {
-      grouped[group.id] = [];
-    });
-
-    sections.forEach((config) => {
-      const navGroup = config.nav_group;
-      if (navGroup && grouped[navGroup]) {
-        grouped[navGroup].push(config);
-      }
-    });
-
-    Object.keys(grouped).forEach((groupId) => {
-      const groupArray = grouped[groupId];
-      if (groupArray) {
-        groupArray.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-      }
-    });
-
-    return grouped;
-  }, [sectionConfigs, nav_groups, sections]);
+  // Flatten all sections for search
+  const allSections = useMemo(() => {
+    return groups.flatMap((group) => group.sections);
+  }, [groups]);
 
   const filteredSections = useMemo((): SectionWithMatches[] | null => {
     if (!searchQuery.trim()) return null;
@@ -99,14 +80,14 @@ function Sidebar({ currentSection, onSectionChange, sectionConfigs }: SidebarPro
     const query = searchQuery.toLowerCase();
     const results: SectionWithMatches[] = [];
 
-    sections.forEach((config) => {
-      const sectionMatches = config.label.toLowerCase().includes(query);
+    allSections.forEach((section) => {
+      const sectionMatches = section.label.toLowerCase().includes(query);
 
       let gridMatches = false;
       const matchingGrids: string[] = [];
 
-      if (config.layout) {
-        config.layout.forEach((item) => {
+      if (section.layout) {
+        section.layout.forEach((item) => {
           const componentConfig = componentConfigs[item.component];
           if (componentConfig?.label?.toLowerCase().includes(query)) {
             gridMatches = true;
@@ -117,14 +98,14 @@ function Sidebar({ currentSection, onSectionChange, sectionConfigs }: SidebarPro
 
       if (sectionMatches || gridMatches) {
         results.push({
-          ...config,
+          ...section,
           matchingGrids: gridMatches ? matchingGrids : null,
         });
       }
     });
 
-    return results.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-  }, [searchQuery, sectionConfigs, sections]);
+    return results;
+  }, [searchQuery, allSections]);
 
   const isSearching = searchQuery.trim().length > 0;
 
@@ -220,17 +201,14 @@ function Sidebar({ currentSection, onSectionChange, sectionConfigs }: SidebarPro
             )}
           </div>
         ) : (
-          nav_groups.map((group) => {
-            const groupSections = groupedSections[group.id] ?? [];
-            if (groupSections.length === 0) return null;
-
-            const isExpanded = expandedGroups[group.id] ?? false;
-            const hasActiveSection = groupSections.some((s) => s.id === currentSection);
+          groups.map((group) => {
+            const isExpanded = expandedGroups[group.label] ?? false;
+            const hasActiveSection = group.sections.some((s) => s.id === currentSection);
 
             return (
-              <div key={group.id} style={{ marginBottom: '4px' }}>
+              <div key={group.label} style={{ marginBottom: '4px' }}>
                 <button
-                  onClick={() => toggleGroup(group.id)}
+                  onClick={() => toggleGroup(group.label)}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -265,12 +243,12 @@ function Sidebar({ currentSection, onSectionChange, sectionConfigs }: SidebarPro
                       color: '#6b7280',
                     }}
                   >
-                    {groupSections.length}
+                    {group.sections.length}
                   </span>
                 </button>
 
                 {isExpanded &&
-                  groupSections.map((section) => (
+                  group.sections.map((section) => (
                     <SectionButton
                       key={section.id}
                       section={section}

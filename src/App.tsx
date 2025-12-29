@@ -10,11 +10,11 @@ import DataDisplay from './components/DataDisplay';
 import Metadata from './components/Metadata';
 
 import { useData } from './hooks/useData';
-import { sectionConfigs, componentConfigs } from './config/registry';
+import { getSection, getDefaultSectionId, componentConfigs } from './config/registry';
 import type { LayoutItem } from './types';
 
 function App(): JSX.Element {
-  const [currentSection, setCurrentSection] = useState<string>('futures');
+  const [currentSection, setCurrentSection] = useState<string>(getDefaultSectionId);
   const mainContentRef = useRef<HTMLElement>(null);
 
   const {
@@ -31,7 +31,7 @@ function App(): JSX.Element {
     refresh,
   } = useData();
 
-  const section = sectionConfigs[currentSection];
+  const section = getSection(currentSection);
 
   const scrollToTop = (): void => {
     mainContentRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
@@ -65,7 +65,6 @@ function App(): JSX.Element {
       <Sidebar
         currentSection={currentSection}
         onSectionChange={setCurrentSection}
-        sectionConfigs={sectionConfigs}
       />
 
       <div

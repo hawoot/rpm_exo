@@ -1,0 +1,36 @@
+{
+  "groups": [
+    {
+      "label": "Overview",
+      "sections": [
+        {
+          "id": "summary",
+          "label": "Summary",
+          "layout": [
+            { "component": "cards/futures-pnl", "row": 1, "col": 1 },
+            { "component": "cards/futures-dv01", "row": 1, "col": 2 }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Positions",
+      "sections": [
+        {
+          "id": "futures-positions",
+          "label": "Futures Pos",
+          "layout": [
+            { "component": "tables/futures-position", "row": 1, "col": 1 }
+          ]
+        },
+        {
+          "id": "bond-positions",
+          "label": "Bonds Pos",
+          "layout": [
+            { "component": "tables/bonds-position", "row": 1, "col": 1 }
+          ]
+        }
+      ]
+    }
+  ]
+}

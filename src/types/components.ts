@@ -6,7 +6,6 @@ import type { Dispatch, SetStateAction } from 'react';
 import type { ApiResponse, RequestParams, DataSource } from './api';
 import type {
   ComponentConfig,
-  SectionConfig,
   ApiConfig,
   FormatType,
   TextColorMode,
@@ -57,7 +56,6 @@ export interface MetadataProps {
 export interface SidebarProps {
   currentSection: string;
   onSectionChange: (sectionId: string) => void;
-  sectionConfigs: Record<string, SectionConfig>;
 }
 
 export interface ParamsFormProps {

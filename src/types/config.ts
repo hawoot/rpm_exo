@@ -120,13 +120,6 @@ export type ComponentConfig =
   | RowConfig
   | KvConfig;
 
-/** Navigation group */
-export interface NavGroup {
-  id: string;
-  label: string;
-  order: number;
-}
-
 /** Layout item definition (matrix format) */
 export interface LayoutItem {
   component: string;  // e.g., "cards/futures-pnl"
@@ -134,18 +127,22 @@ export interface LayoutItem {
   col: number;
 }
 
-/** Section configuration */
+/** Section configuration (within a group) */
 export interface SectionConfig {
   id: string;
   label: string;
-  nav_group: string;
-  order: number;
   layout: LayoutItem[];
 }
 
-/** Sections index configuration */
-export interface SectionsIndex {
-  nav_groups: NavGroup[];
+/** Navigation group with nested sections */
+export interface NavGroup {
+  label: string;
+  sections: SectionConfig[];
+}
+
+/** Navbar configuration */
+export interface NavbarConfig {
+  groups: NavGroup[];
 }
 
 /** Environment configuration */

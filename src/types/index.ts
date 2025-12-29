@@ -40,7 +40,7 @@ export type {
   NavGroup,
   LayoutItem,
   SectionConfig,
-  SectionsIndex,
+  NavbarConfig,
   EnvironmentConfig,
   ApiConfig,
 } from './config';

@@ -8,7 +8,7 @@
 import type {
   SectionConfig,
   ComponentConfig,
-  SectionsIndex,
+  NavbarConfig,
   FormatsConfig,
   ThemeConfig,
   ApiConfig,
@@ -19,13 +19,8 @@ import formats from '../../config/global/formats.json';
 import theme from '../../config/global/theme.json';
 import api from '../../config/api.json';
 
-// Navbar
-import navbar from '../../config/sections/_navbar.json';
-
-// Sections
-import summary from '../../config/sections/summary.json';
-import futuresPositions from '../../config/sections/futures-positions.json';
-import bondPositions from '../../config/sections/bond-positions.json';
+// Navbar (contains all groups and sections)
+import navbar from '../../config/sections/navbar.json';
 
 // Components - Cards
 import futuresPnl from '../../config/components/cards/futures-pnl.json';
@@ -42,13 +37,22 @@ export const formatsConfig = formats as FormatsConfig;
 export const themeConfig = theme as ThemeConfig;
 export const apiConfig = api as ApiConfig;
 
-export const navbarConfig = navbar as SectionsIndex;
+// Navbar config (groups with nested sections)
+export const navbarConfig = navbar as NavbarConfig;
 
-export const sectionConfigs: Record<string, SectionConfig> = {
-  summary: summary as SectionConfig,
-  'futures-positions': futuresPositions as SectionConfig,
-  'bond-positions': bondPositions as SectionConfig,
-};
+// Helper: get section by id
+export function getSection(id: string): SectionConfig | undefined {
+  for (const group of navbarConfig.groups) {
+    const section = group.sections.find((s: SectionConfig) => s.id === id);
+    if (section) return section;
+  }
+  return undefined;
+}
+
+// Helper: get first section id (default)
+export function getDefaultSectionId(): string {
+  return navbarConfig.groups[0]?.sections[0]?.id ?? '';
+}
 
 export const componentConfigs: Record<string, ComponentConfig> = {
   'cards/futures-pnl': futuresPnl as ComponentConfig,

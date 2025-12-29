@@ -56,11 +56,17 @@ function SectionButton({ section, isActive, onClick, indent = false }: SectionBu
   );
 }
 
-function Sidebar({ currentSection, onSectionChange }: SidebarProps): JSX.Element {
+function Sidebar({ currentSection, onSectionChange, isCollapsed, onToggleCollapse }: SidebarProps): JSX.Element {
   const { groups } = navbarConfig;
 
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(() => {
+    const initial: Record<string, boolean> = {};
+    groups.forEach((group) => {
+      initial[group.label] = group.defaultExpanded ?? false;
+    });
+    return initial;
+  });
 
   const toggleGroup = (groupLabel: string): void => {
     setExpandedGroups((prev) => ({
@@ -109,6 +115,37 @@ function Sidebar({ currentSection, onSectionChange }: SidebarProps): JSX.Element
 
   const isSearching = searchQuery.trim().length > 0;
 
+  if (isCollapsed) {
+    return (
+      <nav
+        style={{
+          width: '40px',
+          backgroundColor: '#1f2937',
+          color: '#ffffff',
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100%',
+          overflow: 'hidden',
+        }}
+      >
+        <button
+          onClick={onToggleCollapse}
+          title="Expand sidebar"
+          style={{
+            padding: '16px 8px',
+            border: 'none',
+            background: 'transparent',
+            color: '#d1d5db',
+            cursor: 'pointer',
+            fontSize: '14px',
+          }}
+        >
+          ☰
+        </button>
+      </nav>
+    );
+  }
+
   return (
     <nav
       style={{
@@ -125,6 +162,9 @@ function Sidebar({ currentSection, onSectionChange }: SidebarProps): JSX.Element
         style={{
           padding: '16px',
           borderBottom: '1px solid #374151',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
         }}
       >
         <h1
@@ -136,6 +176,20 @@ function Sidebar({ currentSection, onSectionChange }: SidebarProps): JSX.Element
         >
           RPM Exotics
         </h1>
+        <button
+          onClick={onToggleCollapse}
+          title="Collapse sidebar"
+          style={{
+            padding: '4px 8px',
+            border: 'none',
+            background: 'transparent',
+            color: '#9ca3af',
+            cursor: 'pointer',
+            fontSize: '12px',
+          }}
+        >
+          ✕
+        </button>
       </div>
 
       <div style={{ padding: '12px 12px 8px' }}>

@@ -128,6 +128,7 @@ export interface SectionConfig {
 /** Navigation group with nested sections */
 export interface NavGroup {
   label: string;
+  defaultExpanded?: boolean;
   sections: SectionConfig[];
 }
 
@@ -180,6 +181,8 @@ export interface MetadataProps {
 export interface SidebarProps {
   currentSection: string;
   onSectionChange: (sectionId: string) => void;
+  isCollapsed: boolean;
+  onToggleCollapse: () => void;
 }
 
 /** ParamsForm component props */

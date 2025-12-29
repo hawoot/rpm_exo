@@ -15,6 +15,7 @@ import type { LayoutItem } from './types';
 
 function App(): JSX.Element {
   const [currentSection, setCurrentSection] = useState<string>(getDefaultSectionId);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
   const mainContentRef = useRef<HTMLElement>(null);
 
   const {
@@ -65,6 +66,8 @@ function App(): JSX.Element {
       <Sidebar
         currentSection={currentSection}
         onSectionChange={setCurrentSection}
+        isCollapsed={isSidebarCollapsed}
+        onToggleCollapse={() => setIsSidebarCollapsed((prev) => !prev)}
       />
 
       <div

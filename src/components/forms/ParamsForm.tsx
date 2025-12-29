@@ -198,7 +198,7 @@ function ParamsForm({
             cursor: isLoading ? 'not-allowed' : 'pointer',
           }}
         >
-          {isLoading ? 'Loading...' : 'Fetch'}
+          {isLoading ? 'Loading...' : `${!params.bypass_cache ? '⚡ ' : ''}Refresh`}
         </button>
       </div>
     );
@@ -493,7 +493,7 @@ function ParamsForm({
               marginLeft: 'auto',
             }}
           >
-            {isLoading ? 'Loading...' : 'Fetch Data'}
+            {isLoading ? 'Loading...' : `${!params.bypass_cache ? '⚡ ' : ''}Refresh`}
           </button>
         </div>
 

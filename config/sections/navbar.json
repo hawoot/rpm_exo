@@ -2,6 +2,7 @@
   "groups": [
     {
       "label": "Overview",
+      "defaultExpanded": true,
       "sections": [
         {
           "id": "summary",
@@ -15,6 +16,7 @@
     },
     {
       "label": "Positions",
+      "defaultExpanded": false,
       "sections": [
         {
           "id": "futures-positions",

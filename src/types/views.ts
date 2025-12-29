@@ -77,7 +77,6 @@ interface BaseComponentConfig {
 /** Table configuration */
 export interface TableConfig extends BaseComponentConfig {
   display_type: 'table';
-  totals_path?: string;
   columns: ColumnDefinition[];
 }
 
@@ -141,9 +140,6 @@ export interface NavbarConfig {
 // REACT COMPONENT PROPS
 // ============================================
 
-/** Totals row data */
-export type TotalsRecord = Record<string, number | string | null>;
-
 /** Data row type */
 export type DataRow = Record<string, unknown>;
 
@@ -151,7 +147,6 @@ export type DataRow = Record<string, unknown>;
 export interface TableProps {
   data: DataRow[] | null | undefined;
   columns: ColumnDefinition[];
-  totals?: TotalsRecord | null;
   label?: string;
 }
 

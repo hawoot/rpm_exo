@@ -28,15 +28,9 @@ const compactTheme = themeQuartz.withParams({
   cellHorizontalPadding: 8,
 });
 
-function Table({ data, columns, totals, label }: TableProps): JSX.Element {
+function Table({ data, columns, label }: TableProps): JSX.Element {
   const [copied, setCopied] = useState(false);
   const columnDefs = useMemo(() => convertColumnsToColDefs(columns), [columns]);
-
-  const pinnedBottomRowData = useMemo(() => {
-    if (!totals) return undefined;
-    const firstField = columns[0]?.field ?? '';
-    return [{ ...totals, [firstField]: 'Total' }];
-  }, [totals, columns]);
 
   const defaultColDef = useMemo<ColDef>(() => ({
     sortable: true,
@@ -52,18 +46,12 @@ function Table({ data, columns, totals, label }: TableProps): JSX.Element {
       columns.map(c => row[c.field] ?? '').join('\t')
     ).join('\n');
 
-    let text = headers + '\n' + rows;
-    if (totals) {
-      const totalsRow = columns.map((c, i) =>
-        i === 0 ? 'Total' : (totals[c.field] ?? '')
-      ).join('\t');
-      text += '\n' + totalsRow;
-    }
+    const text = headers + '\n' + rows;
 
     void navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
-  }, [data, columns, totals]);
+  }, [data, columns]);
 
   if (!data?.length) {
     return (
@@ -105,7 +93,6 @@ function Table({ data, columns, totals, label }: TableProps): JSX.Element {
           rowData={data}
           columnDefs={columnDefs}
           defaultColDef={defaultColDef}
-          pinnedBottomRowData={pinnedBottomRowData}
           domLayout="autoHeight"
           autoSizeStrategy={{ type: 'fitCellContents' }}
           columnHoverHighlight={true}

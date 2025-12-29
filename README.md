@@ -79,12 +79,7 @@ Content-Type: application/json
         "future_position": [
           { "instrument": "FOATH6", "position": -50, "dv01": 4500, "pnl": -23000 },
           { "instrument": "FGBLH6", "position": 100, "dv01": 8200, "pnl": 45000 }
-        ],
-        "future_totals": {
-          "position": 50,
-          "dv01": 12700,
-          "pnl": 22000
-        }
+        ]
       },
       "metadata": {
         "last_updated": "ISO datetime",
@@ -353,8 +348,6 @@ Defines a single data display (table, row, card, or key-value).
   "label": "Futures Position",
 
   "data_path": "response_data.futures.data.future_position",
-  "totals_path": "response_data.futures.data.future_totals",
-
   "display_type": "table",
 
   "columns": [
@@ -743,7 +736,6 @@ Use consistent spacing scale:
 
 - Header row: gray background, bold text
 - Data rows: alternating white/light gray
-- Totals row: darker gray background, bold text
 - Hover: highlight row
 - Borders: light gray, 1px
 

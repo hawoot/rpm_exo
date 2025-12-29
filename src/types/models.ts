@@ -79,13 +79,6 @@ export interface FuturePosition {
   pnl: number;
 }
 
-/** Futures totals */
-export interface FutureTotals {
-  position: number;
-  dv01: number;
-  pnl: number;
-}
-
 /** Futures summary */
 export interface FuturesSummary {
   total_pnl: number;
@@ -96,7 +89,6 @@ export interface FuturesSummary {
 /** Futures section data */
 export interface FuturesData {
   future_position: FuturePosition[];
-  future_totals: FutureTotals;
   summary: FuturesSummary;
 }
 
@@ -113,16 +105,9 @@ export interface BondPosition {
   pnl: number;
 }
 
-/** Bond totals */
-export interface BondTotals {
-  dv01: number;
-  pnl: number;
-}
-
 /** Bonds section data */
 export interface BondsData {
   bond_position: BondPosition[];
-  bond_totals: BondTotals;
 }
 
 // ============================================

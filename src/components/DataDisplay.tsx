@@ -6,7 +6,7 @@ import { getByPath } from '../lib/pathAccess';
 import Table from './Table';
 import Card from './Card';
 import ErrorDisplay from './ErrorDisplay';
-import type { DataDisplayProps, DataRow, TotalsRecord, TableConfig, CardConfig, SectionData, SectionMetadata } from '../types';
+import type { DataDisplayProps, DataRow, TableConfig, CardConfig, SectionData, SectionMetadata } from '../types';
 
 function formatMetadataValue(value: unknown): string {
   if (value === null || value === undefined) return '-';
@@ -137,15 +137,11 @@ function DataDisplay({ componentConfig, apiData }: DataDisplayProps): JSX.Elemen
   switch (componentConfig.display_type) {
     case 'table': {
       const tableConfig = componentConfig as TableConfig;
-      const totals = tableConfig.totals_path
-        ? getByPath<TotalsRecord>(apiDataRecord, tableConfig.totals_path)
-        : null;
 
       return renderWithMetadata(
         <Table
           data={data as DataRow[] | null | undefined}
           columns={tableConfig.columns}
-          totals={totals}
           label={tableConfig.label}
         />
       );

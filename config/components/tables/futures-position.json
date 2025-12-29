@@ -3,8 +3,6 @@
   "label": "Futures Position",
 
   "data_path": "response_data.futures.data.future_position",
-  "totals_path": "response_data.futures.data.future_totals",
-
   "display_type": "table",
 
   "columns": [

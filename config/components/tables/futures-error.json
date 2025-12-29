@@ -3,8 +3,6 @@
   "label": "Futures Error Test",
 
   "data_path": "response_data.futures_error.data.future_position",
-  "totals_path": null,
-
   "display_type": "table",
 
   "columns": [

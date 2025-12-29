@@ -3,8 +3,6 @@
   "label": "Bond Positions",
 
   "data_path": "response_data.bonds.data.bond_position",
-  "totals_path": "response_data.bonds.data.bond_totals",
-
   "display_type": "table",
 
   "columns": [
